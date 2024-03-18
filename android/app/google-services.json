@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "853149559410",
+    "project_id": "gofurthr-e2648",
+    "storage_bucket": "gofurthr-e2648.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853149559410:android:fe613915ff13edf40f30eb",
+        "android_client_info": {
+          "package_name": "com.example.gofurthr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "853149559410-6l6orsmfiqjv9ajmibgtof7hjgbj5gtm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXTxYWl6HIfFQJAyO3X2B5eVDOi7ws9zw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "853149559410-6l6orsmfiqjv9ajmibgtof7hjgbj5gtm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "853149559410-1f8sf2i6g9a4edgm4478q30dmaatdnq0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.gofurthr2"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853149559410:android:ee1757e29d2d04200f30eb",
+        "android_client_info": {
+          "package_name": "com.mycompany.gofarther"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "853149559410-63g9cbbrl180v776qfu406b2o9t0l32g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.gofarther",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "853149559410-6l6orsmfiqjv9ajmibgtof7hjgbj5gtm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXTxYWl6HIfFQJAyO3X2B5eVDOi7ws9zw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "853149559410-6l6orsmfiqjv9ajmibgtof7hjgbj5gtm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "853149559410-1f8sf2i6g9a4edgm4478q30dmaatdnq0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.gofurthr2"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
