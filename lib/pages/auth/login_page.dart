@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/button.dart';
@@ -6,26 +8,25 @@ import 'package:gofurthr/components/globals.dart';
 import 'package:gofurthr/components/textfeild.dart';
 import 'package:dotted_line/dotted_line.dart';
 
-class RegisterPage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   final Function()? onTap;
-  const RegisterPage({
+  const LoginPage({
     super.key,
     required this.onTap,
   });
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _LoginPageState extends State<LoginPage> {
   //controller
   final emailController = TextEditingController();
 
   final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
 
   //Log in method
-  void signUp() async {
+  void logIn() async {
     //loading halo
     showDialog(
       context: context,
@@ -39,21 +40,19 @@ class _RegisterPageState extends State<RegisterPage> {
     //main logic
 
     try {
-      //check if pasword matches
-      if (passwordController.text == confirmPasswordController.text) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-      } else {
-        popup("Passwords don't match");
-      }
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
 
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      if (e.code == 'email-already-in-use') {
-        popup("User already exists!");
+      if (e.code == 'invalid-credential') {
+        popup("Invalid Password");
+      }
+      if (e.code == 'invalid-email') {
+        popup("User Doesn't exist!");
       }
     }
   }
@@ -90,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //main text
                 const Text(
-                  "Sign In",
+                  "Log In",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 40,
@@ -133,24 +132,33 @@ class _RegisterPageState extends State<RegisterPage> {
                   suficon: const Icon(Icons.cancel_outlined),
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 10),
 
-                CustTF(
-                  controller: confirmPasswordController,
-                  hint: "Confirm Password",
-                  obscure: true,
-                  preicon: const Icon(Icons.password),
-                  suficon: const Icon(Icons.cancel_outlined),
+                //forgot pass
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "Forgot Password?",
+                        style: TextStyle(
+                          color: primary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 30),
 
                 //button
                 CustBT(
-                  onTap: signUp,
-                  message: "Sign up",
-                  sendIcon: Icons.person_add,
+                  onTap: logIn,
+                  message: "Log In",
+                  sendIcon: Icons.login,
                 ),
+
                 const SizedBox(height: 50),
 
                 //sign in methods
@@ -158,7 +166,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      "Already an user?",
+                      "Need an account?",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -168,7 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     GestureDetector(
                       onTap: widget.onTap,
                       child: const Text(
-                        "Login now!",
+                        "Create one!",
                         style: TextStyle(
                           color: primary,
                           fontSize: 18,

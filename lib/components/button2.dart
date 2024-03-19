@@ -21,7 +21,7 @@ class CustPF extends StatefulWidget {
 
 class _CustPFState extends State<CustPF> {
   bool _hasFocus = false;
-  bool _isObscure = true;
+  final bool _isObscure = true;
 
   @override
   Widget build(BuildContext context) {

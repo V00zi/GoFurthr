@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
 
 class CustTF extends StatelessWidget {
-  final controller; //read input
+  final TextEditingController controller; //read input
   final String hint;
   final bool obscure;
   final Icon preicon;

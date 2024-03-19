@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gofurthr/pages/login_page.dart';
-import 'package:gofurthr/pages/register_page.dart';
+import 'package:gofurthr/pages/auth/login_page.dart';
+import 'package:gofurthr/pages/auth/register_page.dart';
 
 class LoginOrRegister extends StatefulWidget {
   const LoginOrRegister({super.key});
