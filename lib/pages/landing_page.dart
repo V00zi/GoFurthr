@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import 'package:gofurthr/components/globals.dart';
 
 class LandingPage extends StatelessWidget {
@@ -19,34 +20,64 @@ class LandingPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: primary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        actions: [
-          const Icon(
-            Icons.person_2_rounded,
-            color: Colors.white,
+        centerTitle: true,
+        flexibleSpace: Padding(
+          padding: const EdgeInsetsDirectional.only(
+            top: 50,
+            start: 10,
+            end: 5,
           ),
-          IconButton(
-            onPressed: logOut,
-            icon: const Icon(
-              Icons.logout,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-      body: const SafeArea(
-        child: Center(
-          child: Column(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(height: 20),
-              Text(
-                "Welcome back ",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 50,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Icon(Icons.person, size: 30, color: Colors.white),
+                  const SizedBox(width: 10),
+                  Text(
+                    "${user.email}",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+              IconButton(
+                // Logout button on the right
+                onPressed: logOut,
+                icon: const Icon(
+                  Icons.logout,
                   color: Colors.white,
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+      body: const SafeArea(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Column(
+              children: [
+                //welcome text
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Welcome back!",
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                //vehicle div
+              ],
+            ),
           ),
         ),
       ),
