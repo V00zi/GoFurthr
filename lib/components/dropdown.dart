@@ -1,157 +1,108 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firebase Firestore dependency
 
-class DropMenu extends StatefulWidget {
-  const DropMenu({super.key});
+class SimpleDropDown extends StatefulWidget {
+  const SimpleDropDown({Key? key}) : super(key: key);
 
   @override
-  State<DropMenu> createState() => _DropMenuState();
+  State<SimpleDropDown> createState() => _SimpleDropDownState();
 }
 
-class _DropMenuState extends State<DropMenu> {
-//calling vehicle type
+class _SimpleDropDownState extends State<SimpleDropDown> {
+  String? _selectedVehId;
+  String? _selectedBrandId;
+  String? _selectedModelId;
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
+      //first dropdown
 
-        //calling the firestore
-        stream: FirebaseFirestore.instance.collection('veh_type').snapshots(),
+      stream: FirebaseFirestore.instance.collection('vehicleData').snapshots(),
+      builder: (context, snapshot) {
+        final vehicleIds = snapshot.data!.docs.map((doc) => doc.id).toList();
 
-        //fetch veh
-        builder: (context, snapshot) {
-          List<DropdownMenuItem> vehItems = [];
-          if (!snapshot.hasData) {
-            const CircularProgressIndicator();
-          } else {
-            final vehType = snapshot.data?.docs.reversed.toList();
-            for (var type in vehType!) {
-              vehItems.add(
-                DropdownMenuItem(
-                  value: type.id,
-                  child: Text(
-                    type['output'],
-                  ),
-                ),
-              );
-            }
-          }
-
-          //mapping
-          return SizedBox(
-            height: 55,
-            width: 300,
-            child: DropdownButton(
-              icon: const SizedBox.shrink(),
-              borderRadius: BorderRadius.circular(10),
-              hint: const Text(
-                "Vehicle Type",
-                style: TextStyle(color: Colors.white, fontSize: 25),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+          child: Column(
+            children: [
+              DropdownButtonFormField<String>(
+                value: _selectedVehId,
+                hint: Text(_selectedVehId ?? 'Select Vehicle'),
+                items: vehicleIds
+                    .map((id) => DropdownMenuItem(
+                          value: id,
+                          child: Text(id),
+                        ))
+                    .toList(),
+                onChanged: (value) => setState(() {
+                  _selectedVehId = value;
+                  _selectedBrandId = null;
+                  _selectedModelId = null;
+                }),
               ),
-              items: vehItems,
-              menuMaxHeight: 500,
-              onChanged: (brandValue) {
-                //write to firebase
-              },
-            ),
-          );
-        });
+
+              // Conditionally render the second dropdown
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('vehicleData')
+                    .doc(_selectedVehId)
+                    .collection('Brands')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  final brandIds =
+                      snapshot.data!.docs.map((doc) => doc.id).toList();
+
+                  return DropdownButtonFormField<String>(
+                    value: _selectedBrandId,
+                    hint: Text(_selectedBrandId ?? 'Select Brand'),
+                    items: brandIds
+                        .map((id) => DropdownMenuItem(
+                              value: id,
+                              child: Text(id),
+                            ))
+                        .toList(),
+                    onChanged: (value) => setState(() {
+                      _selectedBrandId = value;
+                      _selectedModelId = null;
+                    }),
+                  );
+                },
+              ),
+
+              //third dropdown
+
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('vehicleData')
+                    .doc(_selectedVehId)
+                    .collection('Brands')
+                    .doc(_selectedBrandId)
+                    .collection('Models')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  final brandIds =
+                      snapshot.data!.docs.map((doc) => doc.id).toList();
+
+                  return DropdownButtonFormField<String>(
+                    value: _selectedModelId,
+                    hint: Text(_selectedModelId ?? 'Select Model'),
+                    items: brandIds
+                        .map((id) => DropdownMenuItem(
+                              value: id,
+                              child: Text(id),
+                            ))
+                        .toList(),
+                    onChanged: (value) => setState(() {
+                      _selectedModelId = value;
+                    }),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
-
-  // //calling brands
-  // @override
-  // Widget build(BuildContext context) {
-  //   return StreamBuilder<QuerySnapshot>(
-
-  //       //calling the firestore
-  //       stream: FirebaseFirestore.instance.collection('brands').snapshots(),
-
-  //       //fetch
-  //       builder: (context, snapshot) {
-  //         List<DropdownMenuItem> brandItems = [];
-  //         if (!snapshot.hasData) {
-  //           const CircularProgressIndicator();
-  //         }
-  //         //
-  //         else {
-  //           final brands = snapshot.data?.docs.reversed.toList();
-  //           for (var brand in brands!) {
-  //             brandItems.add(
-  //               DropdownMenuItem(
-  //                 value: brand.id,
-  //                 child: Text(
-  //                   brand['Brand'],
-  //                 ),
-  //               ),
-  //             );
-  //           }
-  //         }
-
-  //         //mapping
-  //         return SizedBox(
-  //           height: 55,
-  //           width: 300,
-  //           child: DropdownButton(
-  //             icon: const SizedBox.shrink(),
-  //             borderRadius: BorderRadius.circular(10),
-  //             hint: const Text(
-  //               "Brand",
-  //               style: TextStyle(color: Colors.white, fontSize: 30),
-  //             ),
-  //             items: brandItems,
-  //             menuMaxHeight: 500,
-  //             onChanged: (brandValue) {
-  //               //write to firebase
-  //             },
-  //           ),
-  //         );
-  //       });
-  // }
-
-  // //calling models
-  // @override
-  // Widget build(BuildContext context) {
-  //   return StreamBuilder<QuerySnapshot>(
-
-  //       //calling the firestore
-  //       stream: FirebaseFirestore.instance.collection('brands').snapshots(),
-
-  //       //fetch
-  //       builder: (context, snapshot) {
-  //         List<DropdownMenuItem> brandItems = [];
-  //         if (!snapshot.hasData) {
-  //           const CircularProgressIndicator();
-  //         } else {
-  //           final brands = snapshot.data?.docs.reversed.toList();
-  //           for (var brand in brands!) {
-  //             brandItems.add(
-  //               DropdownMenuItem(
-  //                 value: brand.id,
-  //                 child: Text(
-  //                   brand['Brand'],
-  //                 ),
-  //               ),
-  //             );
-  //           }
-  //         }
-
-  //         //mapping
-  //         return SizedBox(
-  //           height: 55,
-  //           width: 300,
-  //           child: DropdownButton(
-  //             icon: const SizedBox.shrink(),
-  //             borderRadius: BorderRadius.circular(10),
-  //             hint: const Text(
-  //               "Brand",
-  //               style: TextStyle(color: Colors.white, fontSize: 30),
-  //             ),
-  //             items: brandItems,
-  //             menuMaxHeight: 500,
-  //             onChanged: (brandValue) {
-  //               //write to firebase
-  //             },
-  //           ),
-  //         );
-  //       });
-  // }
 }

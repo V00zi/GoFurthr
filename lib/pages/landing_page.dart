@@ -1,16 +1,44 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gofurthr/pages/auth/auth_page.dart';
 import 'package:gofurthr/pages/functionalities/create_veh.dart';
-import 'package:gofurthr/components/appbar.dart';
 
-class LandingPage extends StatelessWidget {
+class LandingPage extends StatefulWidget {
+  const LandingPage({super.key});
+
+  @override
+  State<LandingPage> createState() => _LandingPageState();
+}
+
+class _LandingPageState extends State<LandingPage> {
   final user = FirebaseAuth.instance.currentUser!;
-  LandingPage({super.key});
+  late StreamSubscription<User?> authStateChangesSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    authStateChangesSubscription =
+        FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        // User is not signed in, navigate to login page
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const AuthPage()));
+      }
+      setState(() {}); // Update UI to reflect user state
+    });
+  }
+
+  @override
+  void dispose() {
+    authStateChangesSubscription.cancel(); // Clean up listener
+    super.dispose();
+  }
 
   //log out
-  void logOut() {
-    FirebaseAuth.instance.signOut();
+  void logOut() async {
+    await FirebaseAuth.instance.signOut();
   }
 
   addNewVeh() {
@@ -34,7 +62,46 @@ class LandingPage extends StatelessWidget {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size(double.maxFinite, 50),
-        child: custAB(),
+        child: AppBar(
+          backgroundColor: primary,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          centerTitle: true,
+          flexibleSpace: Padding(
+            padding: const EdgeInsetsDirectional.only(
+              top: 50,
+              start: 10,
+              end: 5,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Icon(Icons.person, size: 30, color: Colors.white),
+                    const SizedBox(width: 10),
+                    Text(
+                      "${user.email}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  // Logout button on the right
+                  onPressed: logOut,
+                  icon: const Icon(
+                    Icons.logout,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
       body: SafeArea(
         child: Center(

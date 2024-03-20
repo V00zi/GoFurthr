@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gofurthr/components/globals.dart';
+import 'package:gofurthr/pages/landing_page.dart';
 
-final user = FirebaseAuth.instance.currentUser!;
-void logOut() {
-  FirebaseAuth.instance.signOut();
-}
-
-Widget custAB() {
+Widget custAB(String title, BuildContext context) {
   return AppBar(
     backgroundColor: primary,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
@@ -19,33 +14,34 @@ Widget custAB() {
         end: 5,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Icon(Icons.person, size: 30, color: Colors.white),
-              const SizedBox(width: 10),
-              Text(
-                "${user.email}",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ],
-          ),
-          const IconButton(
-            // Logout button on the right
-            onPressed: logOut,
-            icon: Icon(
-              Icons.logout,
+          Text(
+            title,
+            style: const TextStyle(
               color: Colors.white,
+              fontSize: 20,
+              letterSpacing: 5,
             ),
           ),
+          IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LandingPage(),
+                  ),
+                );
+              },
+              icon: const Icon(
+                Icons.arrow_circle_left,
+                size: 30,
+                color: Colors.white,
+              )),
         ],
       ),
     ),
+    //back button
   );
 }
 

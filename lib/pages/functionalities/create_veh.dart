@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/appbar.dart';
-import 'package:gofurthr/pages/landing_page.dart';
 import 'package:gofurthr/components/dropdown.dart';
 
 class AddVeh extends StatelessWidget {
@@ -11,7 +10,7 @@ class AddVeh extends StatelessWidget {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size(double.maxFinite, 50),
-        child: custAB(),
+        child: custAB('HOME PAGE', context),
       ),
       body: SafeArea(
         child: Center(
@@ -30,22 +29,13 @@ class AddVeh extends StatelessWidget {
                 ),
 
                 //dropdown
-                const DropMenu(),
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white),
+                  child: const SimpleDropDown(),
+                ),
                 //back button needs to be changed
-                IconButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LandingPage(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.arrow_circle_left,
-                      size: 50,
-                      color: Colors.white,
-                    ))
               ],
             ),
           ),
