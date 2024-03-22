@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/appbar.dart';
-import 'package:gofurthr/components/dropdown.dart';
+import 'package:gofurthr/pages/addVehicle/vehicles_menu.dart';
 
-class AddVeh extends StatelessWidget {
+class AddVeh extends StatefulWidget {
   const AddVeh({super.key});
 
+  @override
+  State<AddVeh> createState() => _AddVehState();
+}
+
+class _AddVehState extends State<AddVeh> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,10 +33,15 @@ class AddVeh extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(height: 50),
                   //dropdown
+                  SizedBox(height: 50),
                   SimpleDropDown(),
-                  //back button needs to be changed
+
+                  //
+                  //request new
+
+                  //
+                  //
                 ],
               ),
             ),

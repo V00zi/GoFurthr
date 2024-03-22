@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gofurthr/pages/auth/auth_page.dart';
-import 'package:gofurthr/pages/functionalities/create_veh.dart';
+import 'package:gofurthr/pages/addVehicle/av_page.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
