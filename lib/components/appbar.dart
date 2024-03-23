@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
-import 'package:gofurthr/pages/landing_page.dart';
+import 'package:gofurthr/pages/homePage/landing_page.dart';
 
 Widget custAB(String title, BuildContext context) {
   return AppBar(

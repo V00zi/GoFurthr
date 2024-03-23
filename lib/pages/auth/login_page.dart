@@ -3,10 +3,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/button.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gofurthr/components/globals.dart';
 import 'package:gofurthr/components/textfeild.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:gofurthr/components/toast.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
@@ -38,7 +38,6 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     //main logic
-
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
@@ -49,23 +48,12 @@ class _LoginPageState extends State<LoginPage> {
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       if (e.code == 'invalid-credential') {
-        popup("Invalid Password");
+        popup("Invalid Password!");
       }
       if (e.code == 'invalid-email') {
         popup("User Doesn't exist!");
       }
     }
-  }
-
-  void popup(String message) {
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: primary,
-        textColor: Colors.white,
-        fontSize: 16.0);
   }
 
   @override

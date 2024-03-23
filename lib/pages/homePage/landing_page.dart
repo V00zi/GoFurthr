@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gofurthr/components/globals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gofurthr/pages/auth/auth_page.dart';
 import 'package:gofurthr/pages/addVehicle/av_page.dart';
+import 'package:gofurthr/pages/homePage/load_vehicle_data.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -40,22 +44,6 @@ class _LandingPageState extends State<LandingPage> {
   void logOut() async {
     await FirebaseAuth.instance.signOut();
   }
-
-  addNewVeh() {
-    //add logic here
-  }
-
-  Widget buildCard() => Padding(
-        padding: const EdgeInsetsDirectional.only(end: 15.0),
-        child: Container(
-          width: 200,
-          height: 250,
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 233, 233, 233),
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -129,17 +117,17 @@ class _LandingPageState extends State<LandingPage> {
                 Stack(
                   children: [
                     //first child
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          buildCard(),
-                          buildCard(),
-                          buildCard(),
-                          buildCard(),
-                        ],
+                    Container(
+                      height: 300,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: primary, width: 2),
+                      ),
+                      child: const Center(
+                        child: LoadVehicleData(),
                       ),
                     ),
+
                     //Second child
                     Positioned(
                         // Positions the button at the bottom right corner

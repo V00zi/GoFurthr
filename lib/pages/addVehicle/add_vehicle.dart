@@ -27,34 +27,8 @@ class _AddVehBTState extends State<AddVehBT> {
   final user = FirebaseAuth.instance.currentUser!;
   final collectionRef = FirebaseFirestore.instance.collection('userData');
 
-  //gets existing vehicles
-  // Future<String> getCollectionName() async {
-  //   var query = collectionRef.doc(user.email).collection('Vehicles');
-  //   var querySnapshot = await query.get();
-  //   int number;
-
-  //   if (querySnapshot.docs.isNotEmpty) {
-  //     number = querySnapshot.docs.length;
-  //   } else {
-  //     number = 0;
-  //   }
-
-  //   String subcollectionRef = 'vehicle$number';
-
-  //   return subcollectionRef;
-  // }
-
-  //writes data to firebase
-  // void writeData() async {
-  //   collectionRef
-  //       .doc(user.email)
-  //       .collection('Vehicles')
-  //       .doc(getCollectionName().toString())
-  //       .set({});
-  // }
-
   void writeData() async {
-    collectionRef.doc(user.email).collection('Vehicles').add({});
+    collectionRef.doc(user.email).set({});
 
     // Call getCollectionName asynchronously to obtain the subcollection name
     String subcollectionRef = await getCollectionName();
@@ -64,9 +38,11 @@ class _AddVehBTState extends State<AddVehBT> {
         .doc(user.email)
         .collection('Vehicles')
         .doc(subcollectionRef)
-        .set({});
-
-    print('Data written to subcollection: $subcollectionRef');
+        .set({
+      'Type': widget.type,
+      'Brand': widget.brand,
+      'Model': widget.model,
+    });
   }
 
   Future<String> getCollectionName() async {
