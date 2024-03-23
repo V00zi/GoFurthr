@@ -30,6 +30,27 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
     return await query.get();
   }
 
+  //delete vehicle
+  Future<void> deleteVehicle(String vehicleId) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      await FirebaseFirestore.instance
+          .collection('userData')
+          .doc(user.email)
+          .collection('Vehicles')
+          .doc(vehicleId)
+          .delete();
+      popup(
+          "Vehicle deleted successfully"); // Assuming popup is a function to show a success message
+      // Reload the vehicles after deletion
+      setState(() {
+        futureQuerySnapshot = loadVehicles();
+      });
+    } catch (error) {
+      popup("Failed to delete vehicle: ${error.toString()}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot?>(
@@ -76,7 +97,6 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
 
   // Function to build a single vehicle card
   Widget buildVehicleCard(String vehicleId, dynamic vehicleData) {
-    String veichleType = vehicleData["Type"];
     String veichleBrand = vehicleData["Brand"];
     String veichleModel = vehicleData["Model"];
 
@@ -87,32 +107,49 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
         width: 200,
         height: 250,
         decoration: BoxDecoration(
-          color: secondary,
+          color: secondary.withAlpha(100),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Vehicle ID: $vehicleId"),
-            Text("Type: $veichleType"),
-            Text("Brand: $veichleBrand"),
-            Text("Model: $veichleModel"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                //delete button
+                IconButton(
+                  onPressed: () => deleteVehicle(vehicleId),
+                  icon: const Icon(
+                    Icons.delete_forever_rounded,
+                    color: Colors.red,
+                    size: 35,
+                  ),
+                ),
+              ],
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(
+              child: Column(
                 children: [
-                  Container(
-                    height: 60,
-                    width: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(100),
-                      borderRadius: BorderRadius.circular(10),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      veichleBrand.toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        letterSpacing: 5,
+                      ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Image(
-                        image: AssetImage(
-                            'lib/assets/cardAssets/$veichleType.png'),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      veichleModel.toUpperCase(),
+                      style: const TextStyle(
+                        color: primary,
+                        fontSize: 16,
+                        letterSpacing: 5,
                       ),
                     ),
                   ),

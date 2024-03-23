@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gofurthr/components/globals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gofurthr/pages/auth/auth_page.dart';
@@ -114,44 +111,58 @@ class _LandingPageState extends State<LandingPage> {
                 const SizedBox(height: 20),
                 //vehicle div
 
-                Stack(
-                  children: [
-                    //first child
-                    Container(
-                      height: 300,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: primary, width: 2),
-                      ),
-                      child: const Center(
-                        child: LoadVehicleData(),
-                      ),
-                    ),
-
-                    //Second child
-                    Positioned(
-                        // Positions the button at the bottom right corner
-                        bottom: 0.0,
-                        right: 0.0,
-                        child: IconButton(
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const AddVeh(),
-                                ),
-                              );
-                            },
-                            icon: const Icon(
-                              Icons.add_circle,
-                              color: primary,
-                              size: 70,
-                            ))),
-                  ],
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(color: primary, width: 2),
+                  ),
+                  child: const Center(
+                    child: LoadVehicleData(),
+                  ),
                 ),
               ],
             ),
           ),
+        ),
+      ),
+      bottomNavigationBar: const BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        color: primary,
+        height: 70,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 25),
+              child: Text(
+                "ADD VEHICLE",
+                style: TextStyle(
+                  color: secondary2,
+                  fontSize: 12,
+                  letterSpacing: 5,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddVeh(),
+            ),
+          );
+        }, // Replace with your desired FAB action
+        tooltip: 'Add Vehicle',
+        shape: const CircleBorder(),
+        backgroundColor: primary,
+        child: const Icon(
+          Icons.add_rounded,
+          size: 35,
+          color: secondary2,
         ),
       ),
     );
