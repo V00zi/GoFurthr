@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class LoadVehicleData extends StatefulWidget {
 
 class _LoadVehicleDataState extends State<LoadVehicleData> {
   late Future<QuerySnapshot?> futureQuerySnapshot; // Store future for data
+  int currentIdx = 0;
 
   @override
   void initState() {
@@ -30,7 +32,6 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
     return await query.get();
   }
 
-  //delete vehicle
   Future<void> deleteVehicle(String vehicleId) async {
     try {
       final user = FirebaseAuth.instance.currentUser!;
@@ -40,71 +41,28 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
           .collection('Vehicles')
           .doc(vehicleId)
           .delete();
-      popup(
-          "Vehicle deleted successfully"); // Assuming popup is a function to show a success message
+
       // Reload the vehicles after deletion
       setState(() {
         futureQuerySnapshot = loadVehicles();
       });
     } catch (error) {
-      popup("Failed to delete vehicle: ${error.toString()}");
+      popup(error.toString());
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<QuerySnapshot?>(
-      future: futureQuerySnapshot,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final querySnapshot = snapshot.data!;
-          if (querySnapshot.docs.isNotEmpty) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  // Build cards for each vehicle
-                  for (var doc in querySnapshot.docs)
-                    buildVehicleCard(doc.id, doc.data()),
-                ],
-              ),
-            );
-          }
-          //no vehicles with user
-          else {
-            return const Text(
-              "Whoops! no vehicles!",
-              style: TextStyle(color: Colors.white, fontSize: 25),
-            );
-          }
-        }
+  // Function to build a single vehicle card with access to vehicle data
+  Widget buildVehicleCard(DocumentSnapshot doc) {
+    final vehicleData = doc.data() as Map<String, dynamic>;
+    String vehicleType = vehicleData["Type"];
+    String vehicleBrand = vehicleData["Brand"];
+    String vehicleModel = vehicleData["Model"];
+    String vehicleId = doc.id; // Access document ID for deletion
 
-        //
-        else if (snapshot.hasError) {
-          // Handle errors
-          popup(snapshot.error.toString());
-          return const Text("");
-        }
-
-        //
-        else {
-          // While loading
-          return const Text("Loading...");
-        }
-      },
-    );
-  }
-
-  // Function to build a single vehicle card
-  Widget buildVehicleCard(String vehicleId, dynamic vehicleData) {
-    String veichleBrand = vehicleData["Brand"];
-    String veichleModel = vehicleData["Model"];
-
-    //
     return Padding(
       padding: const EdgeInsetsDirectional.all(15.0),
       child: Container(
-        width: 200,
+        width: 500,
         height: 250,
         decoration: BoxDecoration(
           color: secondary.withAlpha(100),
@@ -114,9 +72,19 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                //delete button
+                Container(
+                  height: 45,
+                  width: 45,
+                  decoration: const BoxDecoration(shape: BoxShape.circle),
+                  child: Image(
+                    image: AssetImage('lib/assets/cardAssets/$vehicleType.png'),
+                    width: 250, // Adjusted for better scaling
+                    height: 250, // Adjusted for better scaling
+                  ),
+                ),
+                const SizedBox(width: 170),
                 IconButton(
                   onPressed: () => deleteVehicle(vehicleId),
                   icon: const Icon(
@@ -134,22 +102,20 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Text(
-                      veichleBrand.toUpperCase(),
+                      vehicleBrand,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
-                        letterSpacing: 5,
                       ),
                     ),
                   ),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Text(
-                      veichleModel.toUpperCase(),
+                      vehicleModel,
                       style: const TextStyle(
                         color: primary,
                         fontSize: 16,
-                        letterSpacing: 5,
                       ),
                     ),
                   ),
@@ -159,6 +125,79 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
           ],
         ),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<QuerySnapshot?>(
+      future: futureQuerySnapshot,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final querySnapshot = snapshot.data!;
+          if (querySnapshot.docs.isNotEmpty) {
+            List<Widget> vehicleCards = [];
+            for (var doc in querySnapshot.docs) {
+              vehicleCards.add(buildVehicleCard(doc));
+            }
+
+            return Column(
+              children: [
+                // ... other widgets in your column
+
+                Column(
+                  children: [
+                    CarouselSlider(
+                      items: vehicleCards,
+                      carouselController: CarouselController(),
+                      options: CarouselOptions(
+                        height: 270, // Adjust carousel height as needed
+                        viewportFraction: 0.8, // Adjust viewport size as needed
+                        onPageChanged: (index, reason) =>
+                            setState(() => currentIdx = index),
+                      ),
+                    ),
+                    // Indicator Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children:
+                          List.generate(querySnapshot.docs.length, (index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: CircleAvatar(
+                            backgroundColor: currentIdx == index
+                                ? primary // Adjust active color
+                                : Colors.grey, // Adjust inactive color
+                            radius: 3.0,
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          } else {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 123.0),
+              child: Text(
+                "Whoops! no vehicles!",
+                style: TextStyle(color: Colors.white, fontSize: 25),
+              ),
+            );
+          }
+        } else if (snapshot.hasError) {
+          // Handle errors
+          popup(snapshot.error.toString());
+          return const Text("");
+        } else {
+          // While loading
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 123.0),
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 }

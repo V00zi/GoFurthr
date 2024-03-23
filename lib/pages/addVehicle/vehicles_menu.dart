@@ -34,7 +34,8 @@ class _SimpleDropDownState extends State<SimpleDropDown> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: secondary,
+                    color: secondary2,
+                    border: Border.all(color: primary, width: 3),
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: Padding(
@@ -43,6 +44,11 @@ class _SimpleDropDownState extends State<SimpleDropDown> {
                       vertical: 10,
                     ),
                     child: DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: primary),
+                        ),
+                      ),
                       value: _selectedVehId,
                       iconEnabledColor: Colors.white,
                       dropdownColor: Colors.black,
@@ -89,7 +95,8 @@ class _SimpleDropDownState extends State<SimpleDropDown> {
 
                       return Container(
                         decoration: BoxDecoration(
-                          color: secondary,
+                          color: secondary2,
+                          border: Border.all(color: primary, width: 3),
                           borderRadius: BorderRadius.circular(18),
                         ),
                         child: Padding(
@@ -98,6 +105,11 @@ class _SimpleDropDownState extends State<SimpleDropDown> {
                             vertical: 10,
                           ),
                           child: DropdownButtonFormField<String>(
+                            decoration: const InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: primary),
+                              ),
+                            ),
                             iconEnabledColor: Colors.white,
                             dropdownColor: Colors.black,
                             menuMaxHeight: 400,
@@ -147,7 +159,8 @@ class _SimpleDropDownState extends State<SimpleDropDown> {
 
                       return Container(
                         decoration: BoxDecoration(
-                          color: secondary,
+                          color: secondary2,
+                          border: Border.all(color: primary, width: 3),
                           borderRadius: BorderRadius.circular(18),
                         ),
                         child: Padding(
@@ -156,6 +169,11 @@ class _SimpleDropDownState extends State<SimpleDropDown> {
                             vertical: 10,
                           ),
                           child: DropdownButtonFormField<String>(
+                            decoration: const InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: primary),
+                              ),
+                            ),
                             iconEnabledColor: Colors.white,
                             dropdownColor: Colors.black,
                             menuMaxHeight: 400,

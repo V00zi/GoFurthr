@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
-import 'package:gofurthr/pages/homePage/landing_page.dart';
+import 'package:gofurthr/pages/homePage/home_page.dart';
 
 class AddVehBT extends StatefulWidget {
   bool isEnabled;
@@ -44,12 +44,12 @@ class _AddVehBTState extends State<AddVehBT> {
       'Brand': widget.brand,
       'Model': widget.model,
     });
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LandingPage(),
-      ),
-    );
+    //code to go back to homepage
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    }
   }
 
   Future<String> getCollectionName() async {
@@ -87,7 +87,7 @@ class _AddVehBTState extends State<AddVehBT> {
         style: ElevatedButton.styleFrom(
           disabledBackgroundColor: Colors.grey,
           disabledForegroundColor: Colors.grey[900],
-          backgroundColor: secondary,
+          backgroundColor: primary,
           foregroundColor: Colors.white,
         ),
         child: const Row(
