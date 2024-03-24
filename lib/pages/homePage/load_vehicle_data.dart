@@ -56,9 +56,7 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
 
     try {
       Image image = Image.asset(
-        imageId,
-        fit: BoxFit.fitWidth,
-        width: 1000,
+        imageId, fit: BoxFit.fill,
         // high number to accomodate stretch for square aspect ratios
       ); // Use BoxFit.fill to stretch and overflow
       return image;
@@ -81,7 +79,7 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Column(
+        child: Stack(
           //main coloumn
           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -90,52 +88,14 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                //vehicle image
                 Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.only(
+                  height: 200,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
                     ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            height: 45,
-                            width: 45,
-                            decoration:
-                                const BoxDecoration(shape: BoxShape.circle),
-                            child: Image(
-                              image: AssetImage(
-                                  'lib/assets/cardAssets/$vehicleType.png'),
-                              width: 250, // Adjusted for better scaling
-                              height: 250, // Adjusted for better scaling
-                            ),
-                          ),
-                          const SizedBox(width: 170),
-                          IconButton(
-                            onPressed: () => deleteVehicle(vehicleId),
-                            icon: const Icon(
-                              Icons.delete_forever_rounded,
-                              color: Colors.red,
-                              size: 35,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                //middle
-                Container(
-                  height: 140,
-                  color: Colors.white,
-                  child: ClipRect(
                     child: FutureBuilder<Widget>(
                       future:
                           getAssetImageByPattern(vehicleBrand, vehicleModel),
@@ -153,49 +113,94 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
                     ),
                   ),
                 ),
+              ],
+            ),
 
-                //bottom container
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
+            //bottom container
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 70,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
                   ),
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black.withOpacity(1),
+                      Colors.black.withOpacity(1),
+                      Colors.black.withOpacity(0.8),
+                      Colors.black.withOpacity(0)
+                    ],
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 0.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 10),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Text(
-                              vehicleBrand,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
+                      Container(
+                        // height: 40,
+                        // width: 40,
+                        decoration: const BoxDecoration(shape: BoxShape.circle),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 10),
+                            Image(
+                              image: AssetImage(
+                                  'lib/assets/cardAssets/$vehicleType.png'),
+                              width: 45, // Adjusted for better scaling
+                              height: 45, // Adjusted for better scaling
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 10),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Text(
+                                vehicleBrand,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
-                          ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Text(
-                              vehicleModel,
-                              style: const TextStyle(
-                                color: primary,
-                                fontSize: 16,
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Text(
+                                vehicleModel,
+                                style: const TextStyle(
+                                  color: primary,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => deleteVehicle(vehicleId),
+                        icon: const Icon(
+                          Icons.delete_forever_rounded,
+                          color: Colors.red,
+                          size: 35,
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
           ],
         ),
@@ -224,8 +229,8 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
                       items: vehicleCards,
                       carouselController: CarouselController(),
                       options: CarouselOptions(
-                        height: 290,
-                        viewportFraction: 0.75,
+                        height: 250,
+                        viewportFraction: 0.8,
                         onPageChanged: (index, reason) =>
                             setState(() => currentIdx = index),
                       ),
