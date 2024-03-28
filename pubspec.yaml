@@ -43,6 +43,7 @@ dependencies:
   cloud_firestore: ^4.15.9
   curved_navigation_bar: ^1.0.3
   carousel_slider: ^4.2.1
+  intl: ^0.19.0
   
 
 dev_dependencies:
@@ -70,7 +71,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - lib/assets/
-    - lib/assets/Car/
+    - lib/assets/vehImages/Car/
+    - lib/assets/vehImages/Bike/
+    - lib/assets/vehImages/Scooter/
     - lib/assets/cardAssets/
   #   - images/a_dot_ham.jpeg
 

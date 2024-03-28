@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
-import 'package:gofurthr/pages/homePage/landing_page.dart';
 
 Widget custAB(String title, BuildContext context) {
   return AppBar(
@@ -26,12 +25,7 @@ Widget custAB(String title, BuildContext context) {
           ),
           IconButton(
               onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LandingPage(),
-                  ),
-                );
+                Navigator.of(context).pop();
               },
               icon: const Icon(
                 Icons.arrow_circle_left,

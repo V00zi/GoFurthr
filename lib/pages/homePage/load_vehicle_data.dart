@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
 import 'package:gofurthr/components/toast.dart';
+import 'package:gofurthr/pages/vehicleDetails/vd_page.dart';
 
 class LoadVehicleData extends StatefulWidget {
   const LoadVehicleData({super.key});
@@ -51,17 +52,21 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
     }
   }
 
-  Future<Widget> getAssetImageByPattern(String brand, String model) async {
-    String imageId = "lib/assets/Car/$brand $model 1.jpg";
-
+  Future<Widget> getAssetImageByPattern(
+      String brand, String model, String type) async {
+    String imageId = "lib/assets/vehImages/$type/$brand $model.jpg";
     try {
       Image image = Image.asset(
-        imageId, fit: BoxFit.fill,
-        // high number to accomodate stretch for square aspect ratios
+        imageId,
+        fit: BoxFit.cover,
       ); // Use BoxFit.fill to stretch and overflow
       return image;
     } catch (e) {
-      return const Image(image: AssetImage("lib/assets/Car/placeholder.jpg"));
+      // Handle other errors
+      return Image.asset(
+        "lib/assets/no_image.jpg",
+        fit: BoxFit.cover,
+      );
     }
   }
 
@@ -89,27 +94,41 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 //vehicle image
-                Container(
-                  height: 200,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                    child: FutureBuilder<Widget>(
-                      future:
-                          getAssetImageByPattern(vehicleBrand, vehicleModel),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return snapshot.data!; // Use the retrieved AssetImage
-                        }
-                        //
-                        else if (snapshot.hasError) {
-                          return Text(
-                              'Error: ${snapshot.error}'); // Handle errors
-                        }
-                        return const CircularProgressIndicator(); // Show loading indicator while waiting
-                      },
+                GestureDetector(
+                  onTap: () {
+                    // Navigate to a new page
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            VehicleDetails(vehicleId: vehicleId),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: 200,
+                    width: 450,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                      child: FutureBuilder<Widget>(
+                        future: getAssetImageByPattern(
+                            vehicleBrand, vehicleModel, vehicleType),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return snapshot
+                                .data!; // Use the retrieved AssetImage
+                          }
+                          //
+                          else if (snapshot.hasError) {
+                            return Text(
+                                'Error: ${snapshot.error}'); // Handle errors
+                          }
+                          return const CircularProgressIndicator(); // Show loading indicator while waiting
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -230,7 +249,7 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
                       carouselController: CarouselController(),
                       options: CarouselOptions(
                         height: 250,
-                        viewportFraction: 0.8,
+                        viewportFraction: 0.9,
                         onPageChanged: (index, reason) =>
                             setState(() => currentIdx = index),
                       ),
