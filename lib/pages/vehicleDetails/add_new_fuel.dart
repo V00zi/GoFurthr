@@ -68,9 +68,7 @@ class _EntryPageState extends State<EntryPage> {
               builder: (context) => VehicleDetails(vehicleId: vehId)),
         );
       }
-    }
-    //
-    on FirebaseException catch (e) {
+    } on FirebaseException catch (e) {
       // Handle errors appropriately
       popup(e.toString());
     }
@@ -105,131 +103,141 @@ class _EntryPageState extends State<EntryPage> {
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 100),
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _fuelController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              decoration: const InputDecoration(
-                labelText: 'Fuel (in L)',
-                labelStyle: TextStyle(color: Colors.white),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: primary,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 100),
+                  TextFormField(
+                    controller: _fuelController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'Fuel (in L)',
+                      labelStyle: TextStyle(color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primary,
+                        ),
+                      ),
+                      hintText: "Enter fuel",
+                      hintStyle: TextStyle(color: Colors.white),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter fuel amount.';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                hintText: "Enter fuel",
-                hintStyle: TextStyle(color: Colors.white),
-              ),
-              style: const TextStyle(color: Colors.white),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter fuel amount.';
-                }
-                return null;
-              },
-            ),
 
-            //second TF
-            const SizedBox(height: 30),
-            TextFormField(
-              controller: _distanceController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              decoration: const InputDecoration(
-                labelText: 'Distance (in Km)',
-                labelStyle: TextStyle(color: Colors.white),
-                focusColor: Colors.white,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: primary,
+                  //second TF
+                  const SizedBox(height: 50),
+                  TextFormField(
+                    controller: _distanceController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'Distance (in Km)',
+                      labelStyle: TextStyle(color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primary,
+                        ),
+                      ),
+                      hintText: "Enter distance",
+                      hintStyle: TextStyle(color: Colors.white),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter distance.';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                hintText: "Enter distance",
-                hintStyle: TextStyle(color: Colors.white),
-              ),
-              style: const TextStyle(color: Colors.white),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter distance.';
-                }
-                return null;
-              },
-            ),
 
-            //data box
-            const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Date: $formattedDate',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+                  //data box
+                  const SizedBox(height: 50),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Date: $formattedDate',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          final DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: selectedDate,
+                            firstDate: DateTime(2020, 1),
+                            lastDate: DateTime.now(),
+                          );
+                          if (pickedDate != null) {
+                            setState(() {
+                              selectedDate = pickedDate;
+                            });
+                          }
+                        },
+                        child: const Text(
+                          'Change Date',
+                          style: TextStyle(
+                            color: primary,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: selectedDate,
-                      firstDate: DateTime(2020, 1),
-                      lastDate: DateTime.now(),
-                    );
-                    if (pickedDate != null) {
-                      setState(() {
-                        selectedDate = pickedDate;
-                      });
-                    }
-                  },
-                  child: const Text(
-                    'Change Date',
-                    style: TextStyle(
-                      color: primary,
-                      fontSize: 16,
+
+                  //
+
+                  const SizedBox(height: 50),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primary,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        // Get the entered values
+                        final double enteredFuel =
+                            double.parse(_fuelController.text);
+                        final double enteredDistance =
+                            double.parse(_distanceController.text);
+
+                        final Map<String, dynamic> fuelData = {
+                          'fuel': enteredFuel,
+                          'distance': enteredDistance,
+                          'date': Timestamp.fromDate(selectedDate),
+                        };
+                        _writeFuelDataToFirestore(fuelData, vehId);
+
+                        // You can also perform calculations, save data to a database, etc.
+                      }
+                    },
+                    child: const Text(
+                      'SUBMIT',
+                      style: TextStyle(letterSpacing: 5),
                     ),
                   ),
-                ),
-              ],
-            ),
-
-            //
-            const SizedBox(height: 30),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primary,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  // Get the entered values
-                  final double enteredFuel = double.parse(_fuelController.text);
-                  final double enteredDistance =
-                      double.parse(_distanceController.text);
-
-                  final Map<String, dynamic> fuelData = {
-                    'fuel': enteredFuel,
-                    'distance': enteredDistance,
-                    'date': Timestamp.fromDate(selectedDate),
-                  };
-                  _writeFuelDataToFirestore(fuelData, vehId);
-
-                  // You can also perform calculations, save data to a database, etc.
-                }
-              },
-              child: const Text(
-                'SUBMIT',
-                style: TextStyle(letterSpacing: 5, fontSize: 16),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
