@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 //logo
                 const Image(
-                  image: AssetImage('lib/assets/GFlogo.png'),
+                  image: AssetImage('lib/assets/root/GFlogo.png'),
                   width: 250,
                   height: 250,
                 ),

@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gofurthr/components/globals.dart';
 import 'package:gofurthr/pages/homePage/home_page.dart';
 import 'package:gofurthr/pages/vehicleDetails/add_new_fuel.dart';
-import 'package:gofurthr/pages/vehicleDetails/fueldata_page.dart';
+import 'package:gofurthr/pages/vehicleDetails/load_fuel_data.dart';
 
 class VehicleDetails extends StatefulWidget {
   final String vehicleId;
@@ -155,7 +154,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -207,10 +206,9 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                       child: Column(
                         children: [
                           Expanded(
-                            child: FuelDataList(
-                                username: user.email.toString(),
-                                vehicleId: vehId),
-                          )
+                              child: LoadFuelData(
+                                  email: user.email.toString(),
+                                  vehicleId: vehId))
                         ],
                       ),
                     )

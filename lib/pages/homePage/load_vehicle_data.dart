@@ -1,3 +1,5 @@
+// ignore_for_file: sized_box_for_whitespace
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -180,33 +182,31 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
                           ],
                         ),
                       ),
-                      Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 10),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Text(
-                                vehicleBrand,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 10),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(
+                              vehicleBrand,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
                               ),
                             ),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Text(
-                                vehicleModel,
-                                style: const TextStyle(
-                                  color: primary,
-                                  fontSize: 16,
-                                ),
+                          ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(
+                              vehicleModel,
+                              style: const TextStyle(
+                                color: primary,
+                                fontSize: 16,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       IconButton(
                         onPressed: () => deleteVehicle(vehicleId),
