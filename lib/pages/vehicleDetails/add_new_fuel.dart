@@ -125,6 +125,7 @@ class _EntryPageState extends State<EntryPage> {
                 hintText: "Enter fuel",
                 hintStyle: TextStyle(color: Colors.white),
               ),
+              style: const TextStyle(color: Colors.white),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter fuel amount.';
@@ -143,6 +144,7 @@ class _EntryPageState extends State<EntryPage> {
               decoration: const InputDecoration(
                 labelText: 'Distance (in Km)',
                 labelStyle: TextStyle(color: Colors.white),
+                focusColor: Colors.white,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: primary,
@@ -151,6 +153,7 @@ class _EntryPageState extends State<EntryPage> {
                 hintText: "Enter distance",
                 hintStyle: TextStyle(color: Colors.white),
               ),
+              style: const TextStyle(color: Colors.white),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter distance.';
