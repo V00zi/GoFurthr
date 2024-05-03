@@ -73,8 +73,8 @@ class _LoadFuelDataState extends State<LoadFuelData> {
     return Padding(
       padding: const EdgeInsetsDirectional.only(
         top: 15.0,
-        start: 8,
-        end: 8,
+        start: 15,
+        end: 15,
         bottom: 8,
       ),
       child: Stack(

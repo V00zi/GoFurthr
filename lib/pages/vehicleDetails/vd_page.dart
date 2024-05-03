@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gofurthr/components/globals.dart';
 import 'package:gofurthr/pages/homePage/home_page.dart';
 import 'package:gofurthr/pages/vehicleDetails/add_new_fuel.dart';
 import 'package:gofurthr/pages/vehicleDetails/load_fuel_data.dart';
+import 'package:gofurthr/pages/vehicleDetails/load_graph.dart';
 
 class VehicleDetails extends StatefulWidget {
   final String vehicleId;
@@ -106,12 +109,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                height: 200,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
                 child: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>?>(
                   future: futureQuerySnapshot,
                   builder: (context, snapshot) {
@@ -126,12 +124,15 @@ class _VehicleDetailsState extends State<VehicleDetails> {
 
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Brand: $brand",
+                          "$brand",
+                          style: const TextStyle(fontSize: 30, color: primary),
                         ),
                         Text(
-                          "Model: $model",
+                          "$model",
+                          style: const TextStyle(fontSize: 25, color: primary2),
                         ),
                       ],
                     );
@@ -139,80 +140,104 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                 ),
               ),
               const SizedBox(height: 30),
+
+              //holds non title elements
               Container(
-                height: 500,
+                height: 800,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  // color: Colors.white,
+                  //color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: primary, width: 2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      //
+                      //add fuel box
+                      Container(
+                        decoration: BoxDecoration(
+                          color: secondary.withOpacity(0.3),
+                          //border: Border.all(color: primary, width: 2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
                           children: [
-                            const Row(
-                              children: [
-                                Text(
-                                  "Fuel Entries",
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    color: Colors.white,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0,
+                                vertical: 8,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Row(
+                                    children: [
+                                      Text(
+                                        "Fuel Entries",
+                                        style: TextStyle(
+                                          fontSize: 30,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Icon(
+                                        Icons.gas_meter,
+                                        size: 35,
+                                        color: Colors.white,
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                SizedBox(width: 10),
-                                Icon(
-                                  Icons.gas_meter,
-                                  size: 35,
-                                  color: Colors.white,
-                                ),
-                              ],
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              EntryPage(vehicleId: vehId),
+                                        ),
+                                      );
+                                    },
+                                    child: const Icon(
+                                      Icons.add,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        EntryPage(vehicleId: vehId),
-                                  ),
-                                );
-                              },
-                              child: const Icon(
-                                Icons.add,
+
+                            //actual entries
+
+                            Container(
+                              height: 400,
+                              width: double.infinity,
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                      child: LoadFuelData(
+                                          email: user.email.toString(),
+                                          vehicleId: vehId))
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
 
-                    //actual entries
-                    const SizedBox(height: 20),
-                    Container(
-                      height: 400,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: primary, width: 2),
-                        borderRadius: BorderRadius.circular(20),
+                      //graph
+                      const SizedBox(height: 20),
+                      Container(
+                        height: 400,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          //border: Border.all(color: primary, width: 2),
+                          color: secondary.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        //child: LoadGraph(),
                       ),
-                      child: Column(
-                        children: [
-                          Expanded(
-                              child: LoadFuelData(
-                                  email: user.email.toString(),
-                                  vehicleId: vehId))
-                        ],
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
               )
             ],
