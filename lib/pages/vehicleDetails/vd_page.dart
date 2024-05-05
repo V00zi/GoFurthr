@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gofurthr/components/globals.dart';
 import 'package:gofurthr/pages/homePage/home_page.dart';
 import 'package:gofurthr/pages/vehicleDetails/add_new_fuel.dart';
@@ -44,6 +42,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
   Widget build(BuildContext context) {
     final vehId = widget.vehicleId;
     final user = FirebaseAuth.instance.currentUser!;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: secondary2,
@@ -143,7 +142,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
 
               //holds non title elements
               Container(
-                height: 800,
+                height: screenHeight - 260,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   //color: Colors.white,
@@ -234,7 +233,12 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                           color: secondary.withOpacity(0.3),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        //child: LoadGraph(),
+                        child: Expanded(
+                          child: LoadGraph(
+                            email: user.email.toString(),
+                            vehicleId: vehId,
+                          ),
+                        ),
                       ),
                     ],
                   ),

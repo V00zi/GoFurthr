@@ -65,11 +65,10 @@ class _LoadFuelDataState extends State<LoadFuelData> {
     double distance = fuelData["distance"];
     double fuel = fuelData["fuel"];
     DateTime date = fuelData["date"].toDate();
+    String avg = fuelData["avg"].toString();
     String formattedDate = DateFormat('dd-MM-yyyy').format(date);
     String entryId = doc.id; // Access document ID for deletion
 
-    double avgData = distance / fuel;
-    String avg = avgData.toStringAsFixed(1);
     return Padding(
       padding: const EdgeInsetsDirectional.only(
         top: 15.0,

@@ -222,6 +222,8 @@ class _EntryPageState extends State<EntryPage> {
                           'fuel': enteredFuel,
                           'distance': enteredDistance,
                           'date': Timestamp.fromDate(selectedDate),
+                          'avg': double.parse((enteredDistance / enteredFuel)
+                              .toStringAsFixed(2)),
                         };
                         _writeFuelDataToFirestore(fuelData, vehId);
 
