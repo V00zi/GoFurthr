@@ -1,8 +1,9 @@
+// ignore_for_file: sized_box_for_whitespace
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
-import 'package:intl/intl.dart';
 
 class LoadGraph extends StatefulWidget {
   final String email;

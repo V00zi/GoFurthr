@@ -240,9 +240,11 @@ class _LoadFuelDataState extends State<LoadFuelData> {
           return const Text("");
         } else {
           // While loading
-          return const Padding(
-            padding: EdgeInsets.symmetric(vertical: 123.0),
-            child: CircularProgressIndicator(),
+          return const Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 123.0),
+              child: CircularProgressIndicator(),
+            ),
           );
         }
       },
