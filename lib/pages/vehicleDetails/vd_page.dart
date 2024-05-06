@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:gofurthr/components/globals.dart';
-import 'package:gofurthr/pages/homePage/home_page.dart';
+// ignore_for_file: sized_box_for_whitespace
 import 'package:gofurthr/pages/vehicleDetails/add_new_fuel.dart';
 import 'package:gofurthr/pages/vehicleDetails/load_fuel_data.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gofurthr/components/globals.dart';
+import 'package:gofurthr/pages/homePage/home_page.dart';
 import 'package:gofurthr/pages/vehicleDetails/load_graph.dart';
 
 class VehicleDetails extends StatefulWidget {
@@ -47,59 +48,33 @@ class _VehicleDetailsState extends State<VehicleDetails> {
     return Scaffold(
       backgroundColor: secondary2,
       appBar: AppBar(
+        backgroundColor: primary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        centerTitle: true,
-        backgroundColor: secondary2,
-        flexibleSpace: Padding(
-          padding: const EdgeInsetsDirectional.only(),
-          child: Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  primary,
-                  primary.withOpacity(0.5),
-                  primary.withOpacity(0.4),
-                  primary.withOpacity(0),
-                  secondary2.withOpacity(0),
-                ],
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 30.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Text(
-                    "VEHICLE DETAILS",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      letterSpacing: 5,
-                    ),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HomePage(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.arrow_circle_left,
-                        size: 30,
-                        color: Colors.white,
-                      )),
-                ],
-              ),
+        actions: [
+          const Text(
+            "VEHICLE DETAILS",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              letterSpacing: 5,
             ),
           ),
-        ),
+          IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.arrow_circle_left,
+              size: 30,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -152,7 +127,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                   child: Column(
                     children: [
                       //
-                      //add fuel box
+                      //fuel data
                       Container(
                         decoration: BoxDecoration(
                           color: secondary.withOpacity(0.3),
@@ -212,13 +187,13 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                               width: double.infinity,
                               child: Column(
                                 children: [
-                                  Expanded(
-                                      child: LoadFuelData(
-                                          email: user.email.toString(),
-                                          vehicleId: vehId))
+                                  LoadFuelData(
+                                      email: user.email.toString(),
+                                      vehicleId: vehId)
                                 ],
                               ),
                             ),
+                            const SizedBox(height: 8),
                           ],
                         ),
                       ),
@@ -233,11 +208,9 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                           color: secondary.withOpacity(0.3),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Expanded(
-                          child: LoadGraph(
-                            email: user.email.toString(),
-                            vehicleId: vehId,
-                          ),
+                        child: LoadGraph(
+                          email: user.email.toString(),
+                          vehicleId: vehId,
                         ),
                       ),
                     ],

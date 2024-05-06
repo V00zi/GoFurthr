@@ -225,6 +225,7 @@ class _EntryPageState extends State<EntryPage> {
                           'avg': double.parse((enteredDistance / enteredFuel)
                               .toStringAsFixed(2)),
                         };
+
                         _writeFuelDataToFirestore(fuelData, vehId);
 
                         // You can also perform calculations, save data to a database, etc.

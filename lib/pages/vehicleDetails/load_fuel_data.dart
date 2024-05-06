@@ -81,7 +81,7 @@ class _LoadFuelDataState extends State<LoadFuelData> {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: secondary,
+              color: secondary.withOpacity(0.4),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -221,8 +221,10 @@ class _LoadFuelDataState extends State<LoadFuelData> {
           if (querySnapshot.docs.isNotEmpty) {
             final fuelCards =
                 querySnapshot.docs.map((doc) => buildFuelCard(doc)).toList();
-            return ListView(
-              children: fuelCards,
+            return Expanded(
+              child: ListView(
+                children: fuelCards,
+              ),
             );
           } else {
             return const Expanded(
@@ -240,11 +242,9 @@ class _LoadFuelDataState extends State<LoadFuelData> {
           return const Text("");
         } else {
           // While loading
-          return const Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 123.0),
-              child: CircularProgressIndicator(),
-            ),
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 123.0),
+            child: CircularProgressIndicator(),
           );
         }
       },

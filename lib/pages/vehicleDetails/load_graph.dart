@@ -1,9 +1,13 @@
 // ignore_for_file: sized_box_for_whitespace
 
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
+import 'package:intl/intl.dart';
 
 class LoadGraph extends StatefulWidget {
   final String email;
@@ -31,7 +35,8 @@ class LoadGraphState extends State<LoadGraph> {
         .doc(widget.email)
         .collection('Vehicles')
         .doc(widget.vehicleId)
-        .collection('fuelData');
+        .collection('fuelData')
+        .orderBy('date', descending: false);
     final querySnapshot = await collectionRef.get();
 
     barEntries = querySnapshot.docs.map((doc) {
@@ -55,11 +60,14 @@ class LoadGraphState extends State<LoadGraph> {
 
   BarChartGroupData makeGroupData(DateTime date, double y) {
     return BarChartGroupData(
-      x: date.day.toInt(),
+      x: date.millisecondsSinceEpoch.toInt(),
       barRods: [
         BarChartRodData(
           toY: y,
-          color: widget.barColor,
+          gradient: const LinearGradient(
+              colors: [primary, primary2],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter),
           borderRadius: BorderRadius.circular(18),
           width: 10,
         ),
@@ -74,7 +82,7 @@ class LoadGraphState extends State<LoadGraph> {
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             const Row(
@@ -114,10 +122,39 @@ class LoadGraphState extends State<LoadGraph> {
                       ),
                     ),
             ),
+            GestureDetector(
+              onTap: getData,
+              child: const Icon(
+                Icons.refresh,
+                color: Colors.white,
+              ),
+            )
           ],
         ),
       ),
     );
+  }
+
+  Widget getStyle(double value, TitleMeta meta) {
+    if (meta.axisSide == AxisSide.bottom) {
+      // Convert millisecondsSinceEpoch to DateTime
+      final dateTime = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+
+      // Format the date as "dd/mm/yy"
+      final formattedDate = DateFormat('dd/MM/yy').format(dateTime);
+
+      return SideTitleWidget(
+        axisSide: meta.axisSide,
+        child: Text(formattedDate, style: const TextStyle(color: Colors.white)),
+      );
+    } else {
+      // Use existing logic for other axes (assuming it converts value to string)
+      final op = value.toInt();
+      return SideTitleWidget(
+        axisSide: meta.axisSide,
+        child: Text(op.toString(), style: const TextStyle(color: Colors.white)),
+      );
+    }
   }
 
   BarChartData makeBarData() {
@@ -126,45 +163,34 @@ class LoadGraphState extends State<LoadGraph> {
       return previousValue > currentY ? previousValue : currentY;
     });
 
-    final double maxY = highestY + 10; // Add 10 for buffer
+    final double remainderH = highestY % 5;
+    final double maxY =
+        remainderH == 0 ? highestY + 5 : highestY - remainderH + 5;
 
     return BarChartData(
       maxY: maxY,
       barTouchData: BarTouchData(
         enabled: true,
       ),
-      titlesData: const FlTitlesData(
+      titlesData: FlTitlesData(
         show: true,
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
-            showTitles: false,
+            showTitles: true,
             reservedSize: 38,
+            getTitlesWidget: getStyle,
           ),
-          axisNameWidget: Text(
-            "Entries",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
-          ),
-          axisNameSize: 30,
         ),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             reservedSize: 30,
-            showTitles: false,
+            showTitles: true,
+            getTitlesWidget: getStyle,
           ),
-          axisNameWidget: Text(
-            "Average",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
-          ),
-          axisNameSize: 25,
         ),
-        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles:
+            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
       borderData: FlBorderData(
         show: false,
