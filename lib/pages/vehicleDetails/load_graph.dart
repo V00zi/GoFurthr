@@ -1,10 +1,7 @@
 // ignore_for_file: sized_box_for_whitespace
 
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
 import 'package:intl/intl.dart';
@@ -138,15 +135,20 @@ class LoadGraphState extends State<LoadGraph> {
   Widget getStyle(double value, TitleMeta meta) {
     if (meta.axisSide == AxisSide.bottom) {
       // Convert millisecondsSinceEpoch to DateTime
-      final dateTime = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+      if (barEntries.length <= 5) {
+        final dateTime = DateTime.fromMillisecondsSinceEpoch(value.toInt());
 
-      // Format the date as "dd/mm/yy"
-      final formattedDate = DateFormat('dd/MM/yy').format(dateTime);
+        // Format the date as "dd/mm/yy"
+        final formattedDate = DateFormat('dd/MM/yy').format(dateTime);
 
-      return SideTitleWidget(
-        axisSide: meta.axisSide,
-        child: Text(formattedDate, style: const TextStyle(color: Colors.white)),
-      );
+        return SideTitleWidget(
+          axisSide: meta.axisSide,
+          child:
+              Text(formattedDate, style: const TextStyle(color: Colors.white)),
+        );
+      } else {
+        return const SizedBox();
+      }
     } else {
       // Use existing logic for other axes (assuming it converts value to string)
       final op = value.toInt();
@@ -167,8 +169,18 @@ class LoadGraphState extends State<LoadGraph> {
     final double maxY =
         remainderH == 0 ? highestY + 5 : highestY - remainderH + 5;
 
+    final double lowestY =
+        barEntries.fold(double.infinity, (previousValue, element) {
+      final currentY = element.barRods.first.toY;
+      return previousValue < currentY ? previousValue : currentY;
+    });
+    final double remainderL = lowestY % 5;
+    final double minY =
+        remainderL == 0 ? lowestY - 5 : lowestY - remainderL - 5;
+
     return BarChartData(
       maxY: maxY,
+      minY: minY < 0 ? 0 : minY,
       barTouchData: BarTouchData(
         enabled: true,
       ),
