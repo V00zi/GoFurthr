@@ -165,7 +165,7 @@ class _EntryPageState extends State<EntryPage> {
                     },
                   ),
 
-                  //data box
+                  //date box
                   const SizedBox(height: 50),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

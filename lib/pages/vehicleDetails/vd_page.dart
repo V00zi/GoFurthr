@@ -1,6 +1,4 @@
 // ignore_for_file: sized_box_for_whitespace
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gofurthr/pages/vehicleDetails/add_new_fuel.dart';
 import 'package:gofurthr/pages/vehicleDetails/load_fuel_data.dart';
 import 'package:flutter/material.dart';
@@ -220,7 +218,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                       //stats
                       const SizedBox(height: 20),
                       Container(
-                        height: 350,
+                        //height: 350,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           //border: Border.all(color: primary, width: 2),
@@ -229,26 +227,13 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "Vehicle Statistics",
-                                style: TextStyle(
-                                    fontSize: 20, color: Colors.white),
-                              ),
-                              const SizedBox(height: 20),
-                              FittedBox(
-                                fit: BoxFit.contain,
-                                child: LoadStats(
-                                    email: user.email.toString(),
-                                    vehicleId: vehId),
-                              ),
-                            ],
+                          child: FittedBox(
+                            fit: BoxFit.contain,
+                            child: LoadStats(
+                                email: user.email.toString(), vehicleId: vehId),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
