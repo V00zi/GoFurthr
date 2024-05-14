@@ -2,7 +2,9 @@
 
 import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gofurthr/components/globals.dart';
 
 class LoadStats extends StatefulWidget {
   final String email;
@@ -175,6 +177,84 @@ class _LoadStatsState extends State<LoadStats> {
     );
   }
 
+  Widget vehicleCondtionBlock() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Container(
+          height: 100,
+          width: 200,
+          decoration: BoxDecoration(
+            color: secondary.withOpacity(0.4),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  height: 60,
+                  width: 200,
+                  child: const FittedBox(
+                    fit: BoxFit.contain,
+                    child: Text(
+                      "31.1",
+                      style: TextStyle(
+                        fontSize: 50,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const Text(
+                  "Suggested Mileage",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const VerticalDivider(),
+        Container(
+          height: 100,
+          width: 100,
+          decoration: BoxDecoration(
+            color: secondary.withOpacity(0.4),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: const FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              'VS',
+              style: TextStyle(color: Colors.white, fontSize: 40),
+            ),
+          ),
+        ),
+        const VerticalDivider(),
+        Container(
+          height: 100,
+          width: 200,
+          decoration: BoxDecoration(
+            color: secondary.withOpacity(0.4),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: const FittedBox(
+            fit: BoxFit.contain,
+            child: Text(
+              'Your Mileage',
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -228,10 +308,24 @@ class _LoadStatsState extends State<LoadStats> {
 
         //vs manucaturer
         const SizedBox(height: 20),
-        const Text(
-          "Vehicle Health",
-          style: TextStyle(fontSize: 20, color: Colors.white),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.health_and_safety,
+              color: Colors.white,
+              size: 25,
+            ),
+            SizedBox(width: 10),
+            Text(
+              "Vehicle Condition",
+              style: TextStyle(fontSize: 25, color: Colors.white),
+            ),
+          ],
         ),
+        //health
+        const SizedBox(height: 30),
+        vehicleCondtionBlock(),
       ],
     );
   }
