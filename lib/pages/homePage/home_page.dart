@@ -54,46 +54,43 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size(double.maxFinite, 50),
-        child: AppBar(
-          backgroundColor: primary,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-          centerTitle: true,
-          flexibleSpace: Padding(
-            padding: const EdgeInsetsDirectional.only(
-              top: 50,
-              start: 10,
-              end: 5,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Icon(Icons.person, size: 30, color: Colors.white),
-                    const SizedBox(width: 10),
-                    Text(
-                      "${user.email}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
+      appBar: AppBar(
+        backgroundColor: primary,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        centerTitle: true,
+        flexibleSpace: Padding(
+          padding: const EdgeInsetsDirectional.only(
+            top: 40,
+            start: 10,
+            end: 5,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Icon(Icons.person, size: 30, color: Colors.white),
+                  const SizedBox(width: 10),
+                  Text(
+                    "${user.email}",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
                     ),
-                  ],
-                ),
-                IconButton(
-                  // Logout button on the right
-                  onPressed: logOut,
-                  icon: const Icon(
-                    Icons.logout,
-                    color: Colors.white,
                   ),
+                ],
+              ),
+              IconButton(
+                // Logout button on the right
+                onPressed: logOut,
+                icon: const Icon(
+                  Icons.logout,
+                  color: Colors.white,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

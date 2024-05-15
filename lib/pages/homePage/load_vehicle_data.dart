@@ -249,6 +249,7 @@ class _LoadVehicleDataState extends State<LoadVehicleData> {
                       carouselController: CarouselController(),
                       options: CarouselOptions(
                         height: 250,
+                        enableInfiniteScroll: false,
                         viewportFraction: 0.9,
                         onPageChanged: (index, reason) =>
                             setState(() => currentIdx = index),
