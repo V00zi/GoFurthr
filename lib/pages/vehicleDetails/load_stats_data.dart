@@ -2,7 +2,6 @@
 
 import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
 
@@ -26,11 +25,47 @@ class _LoadStatsState extends State<LoadStats> {
   double averageAvg = 0;
   double totalDistance = 0;
   double totalFuel = 0;
+  int averageSug=0;
   int avgDays = 0;
+  String vehicleName="";
   List<double> avgData = [];
   List<double> distData = [];
   List<double> fuelData = [];
   List<String> dateData = [];
+
+  Future<void> getMetadata() async{
+    DocumentReference documentRef = FirebaseFirestore.instance
+    .collection('userData')
+    .doc(widget.email)
+    .collection('Vehicles')
+    .doc(widget.vehicleId);
+
+    DocumentSnapshot documentSnapshot = await documentRef.get();
+
+    if (documentSnapshot.exists) {
+      Map<String, dynamic>? data = documentSnapshot.data() as Map<String, dynamic>?;
+
+      if (data != null) {
+        vehicleName= data["Brand"]+" "+data["Model"];
+      }
+    }
+
+    DocumentReference documentRef2 = FirebaseFirestore.instance
+    .collection('vehicleMetadata')
+    .doc(vehicleName);
+
+    DocumentSnapshot documentSnapshot2 = await documentRef2.get();
+
+    if (documentSnapshot2.exists) {
+      Map<String, dynamic>? data = documentSnapshot2.data() as Map<String, dynamic>?;
+
+      if (data != null) {
+        averageSug=data['avgSuggested'];
+      }
+    }
+    
+    setState(() {});
+  }
 
   Future<void> getData() async {
     final collectionRef = FirebaseFirestore.instance
@@ -97,6 +132,7 @@ class _LoadStatsState extends State<LoadStats> {
   void initState() {
     super.initState();
     getData();
+    getMetadata();
   }
 
   void calcAvgDays(List<String> inp) {
@@ -177,7 +213,11 @@ class _LoadStatsState extends State<LoadStats> {
     );
   }
 
-  Widget vehicleCondtionBlock() {
+  Widget vehicleCondtionBlock(int avgSug,double avgAct) {
+    Color retColor= avgSug>avgAct ? Colors.red : Colors.green;
+    Icon retIcon= avgSug>avgAct ? Icon(Icons.arrow_downward,color: retColor.withOpacity(0.3),size: 30,) : Icon(Icons.arrow_upward,color: retColor.withOpacity(0.3),size: 30,);
+    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -196,11 +236,11 @@ class _LoadStatsState extends State<LoadStats> {
                 Container(
                   height: 60,
                   width: 200,
-                  child: const FittedBox(
+                  child:  FittedBox(
                     fit: BoxFit.contain,
                     child: Text(
-                      "31.1",
-                      style: TextStyle(
+                      avgSug.toString(),
+                      style: const TextStyle(
                         fontSize: 50,
                         color: Colors.white,
                       ),
@@ -243,11 +283,40 @@ class _LoadStatsState extends State<LoadStats> {
             color: secondary.withOpacity(0.4),
             borderRadius: BorderRadius.circular(18),
           ),
-          child: const FittedBox(
-            fit: BoxFit.contain,
-            child: Text(
-              'Your Mileage',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  height: 60,
+                  width: 200,
+                  child:  FittedBox(
+                    fit: BoxFit.contain,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          avgAct.toString(),
+                          style:  TextStyle(
+                            fontSize: 50,
+                            color: retColor,
+                          ),
+                        ),
+                        retIcon,
+                      ],
+                    ),
+                  ),
+                ),
+                const Text(
+                  "Your Mileage",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
         ),
@@ -325,7 +394,7 @@ class _LoadStatsState extends State<LoadStats> {
         ),
         //health
         const SizedBox(height: 30),
-        vehicleCondtionBlock(),
+        vehicleCondtionBlock(averageSug,averageAvg),
       ],
     );
   }
