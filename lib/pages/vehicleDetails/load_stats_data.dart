@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/globals.dart';
+import 'package:intl/intl.dart';
 
 class LoadStats extends StatefulWidget {
   final String email;
@@ -27,6 +28,7 @@ class _LoadStatsState extends State<LoadStats> {
   double totalFuel = 0;
   int averageSug = 0;
   int avgDays = 0;
+  double actualMonths = 0;
   int suggestedMonths = 0;
   String vehicleName = "";
   List<double> avgData = [];
@@ -128,7 +130,7 @@ class _LoadStatsState extends State<LoadStats> {
     }
     totalFuel = double.parse(totalFuel.toStringAsFixed(2));
 
-    calcAvgDays(fuelDateData);
+    calcAvgDays(fuelDateData, false);
 
     //
     //
@@ -161,9 +163,10 @@ class _LoadStatsState extends State<LoadStats> {
 
         // Add formatted date to the list
         serviceDateData.add(formattedDate);
-        print(serviceDateData);
       }
     }
+
+    calcAvgDays(serviceDateData, true);
     setState(() {});
   }
 
@@ -174,19 +177,23 @@ class _LoadStatsState extends State<LoadStats> {
     getMetadata();
   }
 
-  void calcAvgDays(List<String> inp) {
+  void calcAvgDays(List<String> inp, bool month) {
     int sum = 0;
     int len = inp.length;
     double avg = 0;
-    for (int i = 0; i < len; i += 2) {
-      List<int> date1Components = inp[i].split('/').map(int.parse).toList();
-      List<int> date2Components = inp[i + 1].split('/').map(int.parse).toList();
+    print(inp);
 
-      // Create DateTime objects
-      DateTime firstDate =
-          DateTime(date1Components[2], date1Components[1], date1Components[0]);
-      DateTime secondDate =
-          DateTime(date2Components[2], date2Components[1], date2Components[0]);
+    for (int i = 0; i < len; i += 2) {
+      final formatter = DateFormat("dd/MM/yyyy");
+      DateTime firstDate, secondDate;
+
+      try {
+        firstDate = formatter.parse(inp[i]);
+        secondDate = formatter.parse(inp[i + 1]);
+      } catch (e) {
+        print("Error parsing dates: $e");
+        continue; // Skip to the next pair if parsing fails
+      }
 
       // Calculate the difference in days
       Duration difference = secondDate.difference(firstDate);
@@ -194,7 +201,28 @@ class _LoadStatsState extends State<LoadStats> {
       sum += daysBetween;
     }
     avg = sum / len;
-    avgDays = avg.toInt();
+
+    if (month == true) {
+      final conv = (sum.toInt() / 30.4167).toStringAsFixed(1);
+      actualMonths = len == 1 ? 0 : double.parse(conv);
+      print("days: $sum, months: $conv");
+      calcNextService(inp);
+    } else {
+      avgDays = len == 1 ? 0 : avg.toInt();
+    }
+  }
+
+  String calcNextService(List<String> inp) {
+    int len = inp.length;
+    DateTime recentDate, newDate;
+    double daysToAdd = actualMonths * 30.4167;
+
+    final formatter = DateFormat("dd/MM/yy");
+    recentDate = formatter.parse(inp[len - 1]);
+    newDate = recentDate.add(Duration(days: daysToAdd.toInt()));
+    String formattedNewDate = formatter.format(newDate);
+
+    return formattedNewDate;
   }
 
   //builder
@@ -372,9 +400,9 @@ class _LoadStatsState extends State<LoadStats> {
     );
   }
 
-  Widget serviceConditionBlock(int monSug, int monAct) {
-    Color retColor = monSug > monAct ? Colors.red : Colors.green;
-    Icon retIcon = monSug > monAct
+  Widget serviceConditionBlock(int monSug, double monAct) {
+    Color retColor = monSug < monAct ? Colors.red : Colors.green;
+    Icon retIcon = monSug < monAct
         ? Icon(
             Icons.arrow_downward,
             color: retColor.withOpacity(0.3),
@@ -390,7 +418,7 @@ class _LoadStatsState extends State<LoadStats> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Container(
-          height: 100,
+          height: 120,
           width: 175,
           decoration: BoxDecoration(
             color: secondary.withOpacity(0.4),
@@ -418,7 +446,7 @@ class _LoadStatsState extends State<LoadStats> {
                 const FittedBox(
                   fit: BoxFit.contain,
                   child: Text(
-                    "Suggested Service Interval",
+                    "Suggested Service Interval\n(months)",
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white,
@@ -432,7 +460,7 @@ class _LoadStatsState extends State<LoadStats> {
         ),
         const VerticalDivider(),
         Container(
-          height: 100,
+          height: 120,
           width: 150,
           decoration: BoxDecoration(
             color: secondary.withOpacity(0.4),
@@ -447,18 +475,18 @@ class _LoadStatsState extends State<LoadStats> {
                   height: 60,
                   width: 200,
                   child: FittedBox(
-                    fit: BoxFit.contain,
+                    fit: BoxFit.scaleDown,
                     child: Text(
-                      monSug.toString(),
+                      calcNextService(serviceDateData),
                       style: const TextStyle(
-                        fontSize: 50,
+                        fontSize: 30,
                         color: Colors.white,
                       ),
                     ),
                   ),
                 ),
                 const Text(
-                  "Next Service Date",
+                  "Next Service Date\n(dd/mm/yy)",
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.white,
@@ -471,7 +499,7 @@ class _LoadStatsState extends State<LoadStats> {
         ),
         const VerticalDivider(),
         Container(
-          height: 100,
+          height: 120,
           width: 175,
           decoration: BoxDecoration(
             color: secondary.withOpacity(0.4),
@@ -505,7 +533,7 @@ class _LoadStatsState extends State<LoadStats> {
                 const FittedBox(
                   fit: BoxFit.contain,
                   child: Text(
-                    "Your Service Interval",
+                    "Your Service Interval\n(months)",
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white,
@@ -593,7 +621,7 @@ class _LoadStatsState extends State<LoadStats> {
         const SizedBox(height: 30),
         vehicleCondtionBlock(averageSug, averageAvg),
         const SizedBox(height: 10),
-        serviceConditionBlock(suggestedMonths, 3),
+        serviceConditionBlock(suggestedMonths, actualMonths),
       ],
     );
   }
