@@ -56,41 +56,41 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primary,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         centerTitle: true,
         flexibleSpace: Padding(
           padding: const EdgeInsetsDirectional.only(
-            top: 40,
             start: 10,
             end: 5,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  const Icon(Icons.person, size: 30, color: Colors.white),
-                  const SizedBox(width: 10),
-                  Text(
-                    "${user.email}",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+          child: SafeArea(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Icon(Icons.person, size: 30, color: Colors.white),
+                    const SizedBox(width: 10),
+                    Text(
+                      "${user.email}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              IconButton(
-                // Logout button on the right
-                onPressed: logOut,
-                icon: const Icon(
-                  Icons.logout,
-                  color: Colors.white,
+                  ],
                 ),
-              ),
-            ],
+                IconButton(
+                  // Logout button on the right
+                  onPressed: logOut,
+                  icon: const Icon(
+                    Icons.logout,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -25,45 +25,50 @@ class _LoadStatsState extends State<LoadStats> {
   double averageAvg = 0;
   double totalDistance = 0;
   double totalFuel = 0;
-  int averageSug=0;
+  int averageSug = 0;
   int avgDays = 0;
-  String vehicleName="";
+  int suggestedMonths = 0;
+  String vehicleName = "";
   List<double> avgData = [];
   List<double> distData = [];
   List<double> fuelData = [];
-  List<String> dateData = [];
+  List<String> fuelDateData = [];
+  List<String> serviceDateData = [];
 
-  Future<void> getMetadata() async{
+  Future<void> getMetadata() async {
     DocumentReference documentRef = FirebaseFirestore.instance
-    .collection('userData')
-    .doc(widget.email)
-    .collection('Vehicles')
-    .doc(widget.vehicleId);
+        .collection('userData')
+        .doc(widget.email)
+        .collection('Vehicles')
+        .doc(widget.vehicleId);
 
     DocumentSnapshot documentSnapshot = await documentRef.get();
 
     if (documentSnapshot.exists) {
-      Map<String, dynamic>? data = documentSnapshot.data() as Map<String, dynamic>?;
+      Map<String, dynamic>? data =
+          documentSnapshot.data() as Map<String, dynamic>?;
 
       if (data != null) {
-        vehicleName= data["Brand"]+" "+data["Model"];
+        vehicleName = data["Brand"] + " " + data["Model"];
       }
     }
 
     DocumentReference documentRef2 = FirebaseFirestore.instance
-    .collection('vehicleMetadata')
-    .doc(vehicleName);
+        .collection('vehicleMetadata')
+        .doc(vehicleName);
 
     DocumentSnapshot documentSnapshot2 = await documentRef2.get();
 
     if (documentSnapshot2.exists) {
-      Map<String, dynamic>? data = documentSnapshot2.data() as Map<String, dynamic>?;
+      Map<String, dynamic>? data =
+          documentSnapshot2.data() as Map<String, dynamic>?;
 
       if (data != null) {
-        averageSug=data['avgSuggested'];
+        averageSug = data['avgSuggested'];
+        suggestedMonths = data['serviceInterval'];
       }
     }
-    
+
     setState(() {});
   }
 
@@ -99,7 +104,7 @@ class _LoadStatsState extends State<LoadStats> {
             "${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year.toString().substring(2)}";
 
         // Add formatted date to the list
-        dateData.add(formattedDate);
+        fuelDateData.add(formattedDate);
       }
     }
 
@@ -123,8 +128,42 @@ class _LoadStatsState extends State<LoadStats> {
     }
     totalFuel = double.parse(totalFuel.toStringAsFixed(2));
 
-    calcAvgDays(dateData);
+    calcAvgDays(fuelDateData);
 
+    //
+    //
+
+    final collectionRef2 = FirebaseFirestore.instance
+        .collection('userData')
+        .doc(widget.email)
+        .collection('Vehicles')
+        .doc(widget.vehicleId)
+        .collection('serviceData')
+        .orderBy("date", descending: false);
+    final querySnapshot2 = await collectionRef2.get();
+    final List<DocumentSnapshot> documents2 = querySnapshot2.docs;
+
+    // You can now query or iterate over the documents list
+    // for example:
+    for (final doc in documents2) {
+      final Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+
+      if (data != null && data['serviceType'] == "Complete") {
+        // Assuming your timestamp field is named "date"
+        Timestamp timestamp = data["date"];
+
+        // Convert timestamp to DateTime
+        DateTime dateTime = timestamp.toDate();
+
+        // Format DateTime as "dd/mm/yy" string
+        String formattedDate =
+            "${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year.toString().substring(2)}";
+
+        // Add formatted date to the list
+        serviceDateData.add(formattedDate);
+        print(serviceDateData);
+      }
+    }
     setState(() {});
   }
 
@@ -213,10 +252,19 @@ class _LoadStatsState extends State<LoadStats> {
     );
   }
 
-  Widget vehicleCondtionBlock(int avgSug,double avgAct) {
-    Color retColor= avgSug>avgAct ? Colors.red : Colors.green;
-    Icon retIcon= avgSug>avgAct ? Icon(Icons.arrow_downward,color: retColor.withOpacity(0.3),size: 30,) : Icon(Icons.arrow_upward,color: retColor.withOpacity(0.3),size: 30,);
-    
+  Widget vehicleCondtionBlock(int avgSug, double avgAct) {
+    Color retColor = avgSug > avgAct ? Colors.red : Colors.green;
+    Icon retIcon = avgSug > avgAct
+        ? Icon(
+            Icons.arrow_downward,
+            color: retColor.withOpacity(0.3),
+            size: 30,
+          )
+        : Icon(
+            Icons.arrow_upward,
+            color: retColor.withOpacity(0.3),
+            size: 30,
+          );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -236,7 +284,7 @@ class _LoadStatsState extends State<LoadStats> {
                 Container(
                   height: 60,
                   width: 200,
-                  child:  FittedBox(
+                  child: FittedBox(
                     fit: BoxFit.contain,
                     child: Text(
                       avgSug.toString(),
@@ -291,14 +339,14 @@ class _LoadStatsState extends State<LoadStats> {
                 Container(
                   height: 60,
                   width: 200,
-                  child:  FittedBox(
+                  child: FittedBox(
                     fit: BoxFit.contain,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
                           avgAct.toString(),
-                          style:  TextStyle(
+                          style: TextStyle(
                             fontSize: 50,
                             color: retColor,
                           ),
@@ -315,6 +363,155 @@ class _LoadStatsState extends State<LoadStats> {
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget serviceConditionBlock(int monSug, int monAct) {
+    Color retColor = monSug > monAct ? Colors.red : Colors.green;
+    Icon retIcon = monSug > monAct
+        ? Icon(
+            Icons.arrow_downward,
+            color: retColor.withOpacity(0.3),
+            size: 30,
+          )
+        : Icon(
+            Icons.arrow_upward,
+            color: retColor.withOpacity(0.3),
+            size: 30,
+          );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Container(
+          height: 100,
+          width: 175,
+          decoration: BoxDecoration(
+            color: secondary.withOpacity(0.4),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  height: 60,
+                  width: 200,
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Text(
+                      monSug.toString(),
+                      style: const TextStyle(
+                        fontSize: 50,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const FittedBox(
+                  fit: BoxFit.contain,
+                  child: Text(
+                    "Suggested Service Interval",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const VerticalDivider(),
+        Container(
+          height: 100,
+          width: 150,
+          decoration: BoxDecoration(
+            color: secondary.withOpacity(0.4),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  height: 60,
+                  width: 200,
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Text(
+                      monSug.toString(),
+                      style: const TextStyle(
+                        fontSize: 50,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const Text(
+                  "Next Service Date",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const VerticalDivider(),
+        Container(
+          height: 100,
+          width: 175,
+          decoration: BoxDecoration(
+            color: secondary.withOpacity(0.4),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  height: 60,
+                  width: 200,
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          monAct.toString(),
+                          style: TextStyle(
+                            fontSize: 50,
+                            color: retColor,
+                          ),
+                        ),
+                        retIcon,
+                      ],
+                    ),
+                  ),
+                ),
+                const FittedBox(
+                  fit: BoxFit.contain,
+                  child: Text(
+                    "Your Service Interval",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),
@@ -394,7 +591,9 @@ class _LoadStatsState extends State<LoadStats> {
         ),
         //health
         const SizedBox(height: 30),
-        vehicleCondtionBlock(averageSug,averageAvg),
+        vehicleCondtionBlock(averageSug, averageAvg),
+        const SizedBox(height: 10),
+        serviceConditionBlock(suggestedMonths, 3),
       ],
     );
   }

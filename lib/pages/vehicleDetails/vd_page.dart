@@ -1,6 +1,8 @@
 // ignore_for_file: sized_box_for_whitespace
 import 'package:gofurthr/pages/vehicleDetails/add_new_fuel.dart';
+import 'package:gofurthr/pages/vehicleDetails/add_new_service.dart';
 import 'package:gofurthr/pages/vehicleDetails/load_fuel_data.dart';
+import 'package:gofurthr/pages/vehicleDetails/load_service_data.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,8 +11,6 @@ import 'package:gofurthr/pages/homePage/home_page.dart';
 import 'package:gofurthr/pages/vehicleDetails/load_graph.dart';
 import 'package:gofurthr/pages/vehicleDetails/load_stats_data.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
-
 
 class VehicleDetails extends StatefulWidget {
   final String vehicleId;
@@ -25,7 +25,7 @@ class VehicleDetails extends StatefulWidget {
 
 class _VehicleDetailsState extends State<VehicleDetails> {
   late Future<DocumentSnapshot<Map<String, dynamic>>?> futureQuerySnapshot;
-   int currentIdx = 0;
+  int currentIdx = 0;
 
   @override
   void initState() {
@@ -44,20 +44,13 @@ class _VehicleDetailsState extends State<VehicleDetails> {
     return await query.get();
   }
 
-
-  
-
   @override
   Widget build(BuildContext context) {
     final vehId = widget.vehicleId;
     final user = FirebaseAuth.instance.currentUser!;
     double screenHeight = MediaQuery.of(context).size.height;
-    
-    
-    
 
     List<Widget> carouselContainers = [
-
       //fuel data container
       Container(
         decoration: BoxDecoration(
@@ -73,8 +66,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                 vertical: 8,
               ),
               child: Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Row(
                     children: [
@@ -98,8 +90,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              EntryPage(vehicleId: vehId),
+                          builder: (context) => EntryPage(vehicleId: vehId),
                         ),
                       );
                     },
@@ -110,13 +101,10 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                 ],
               ),
             ),
-        
             Expanded(
               child: Column(
-              children: [
-                LoadFuelData(
-                    email: user.email.toString(),
-                    vehicleId: vehId)
+                children: [
+                  LoadFuelData(email: user.email.toString(), vehicleId: vehId)
                 ],
               ),
             ),
@@ -124,7 +112,6 @@ class _VehicleDetailsState extends State<VehicleDetails> {
           ],
         ),
       ),
-      
 
       //service data
       Container(
@@ -141,8 +128,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                 vertical: 8,
               ),
               child: Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Row(
                     children: [
@@ -167,7 +153,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              EntryPage(vehicleId: vehId),
+                              ServiceEntryPage(vehicleId: vehId),
                         ),
                       );
                     },
@@ -178,11 +164,10 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                 ],
               ),
             ),
-        
-            const Expanded(
-              child: Column(
-              
-              ),
+            Expanded(
+              child: Column(children: [
+                LoadServiceData(email: user.email.toString(), vehicleId: vehId)
+              ]),
             ),
             const SizedBox(height: 8),
           ],
@@ -190,11 +175,9 @@ class _VehicleDetailsState extends State<VehicleDetails> {
       ),
     ];
 
-
     // Create the carousel
     CarouselSlider carousel = CarouselSlider(
       items: carouselContainers,
-      
       options: CarouselOptions(
         height: 480,
         enableInfiniteScroll: false,
@@ -202,8 +185,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
         enlargeCenterPage: true,
         initialPage: 0,
         scrollDirection: Axis.horizontal,
-        onPageChanged: (index, reason) =>
-          setState(() => currentIdx = index),
+        onPageChanged: (index, reason) => setState(() => currentIdx = index),
       ),
     );
 
@@ -291,22 +273,21 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                       //
                       //fuel data
                       carousel,
-                       Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children:
-                          List.generate(2, (index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0,vertical: 8),
-                          child: CircleAvatar(
-                            backgroundColor: currentIdx == index
-                                ? primary // Adjust active color
-                                : Colors.grey, // Adjust inactive color
-                            radius: 3.0,
-                          ),
-                        );
-                      }),
-                    ),
-                      
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(2, (index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4.0, vertical: 8),
+                            child: CircleAvatar(
+                              backgroundColor: currentIdx == index
+                                  ? primary // Adjust active color
+                                  : Colors.grey, // Adjust inactive color
+                              radius: 3.0,
+                            ),
+                          );
+                        }),
+                      ),
 
                       //graph
                       const SizedBox(height: 20),
