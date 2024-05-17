@@ -222,7 +222,7 @@ class _LoadFuelDataState extends State<LoadFuelData> {
             final fuelCards =
                 querySnapshot.docs.map((doc) => buildFuelCard(doc)).toList();
             return Expanded(
-              child: ListView(
+              child: ListView(            
                 children: fuelCards,
               ),
             );

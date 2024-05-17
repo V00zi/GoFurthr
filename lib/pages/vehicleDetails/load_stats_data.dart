@@ -36,6 +36,7 @@ class _LoadStatsState extends State<LoadStats> {
   List<double> fuelData = [];
   List<String> fuelDateData = [];
   List<String> serviceDateData = [];
+  String formattedNewDate="NA";
 
   Future<void> getMetadata() async {
     DocumentReference documentRef = FirebaseFirestore.instance
@@ -181,7 +182,6 @@ class _LoadStatsState extends State<LoadStats> {
     int sum = 0;
     int len = inp.length;
     double avg = 0;
-    print(inp);
 
     for (int i = 0; i < len; i += 2) {
       final formatter = DateFormat("dd/MM/yyyy");
@@ -191,7 +191,6 @@ class _LoadStatsState extends State<LoadStats> {
         firstDate = formatter.parse(inp[i]);
         secondDate = formatter.parse(inp[i + 1]);
       } catch (e) {
-        print("Error parsing dates: $e");
         continue; // Skip to the next pair if parsing fails
       }
 
@@ -205,24 +204,21 @@ class _LoadStatsState extends State<LoadStats> {
     if (month == true) {
       final conv = (sum.toInt() / 30.4167).toStringAsFixed(1);
       actualMonths = len == 1 ? 0 : double.parse(conv);
-      print("days: $sum, months: $conv");
       calcNextService(inp);
     } else {
       avgDays = len == 1 ? 0 : avg.toInt();
     }
   }
 
-  String calcNextService(List<String> inp) {
+  void calcNextService(List<String> inp) {
     int len = inp.length;
     DateTime recentDate, newDate;
-    double daysToAdd = actualMonths * 30.4167;
+    double daysToAdd = suggestedMonths * 30.4167;
 
     final formatter = DateFormat("dd/MM/yy");
     recentDate = formatter.parse(inp[len - 1]);
     newDate = recentDate.add(Duration(days: daysToAdd.toInt()));
-    String formattedNewDate = formatter.format(newDate);
-
-    return formattedNewDate;
+    formattedNewDate =  formatter.format(newDate);
   }
 
   //builder
@@ -400,7 +396,7 @@ class _LoadStatsState extends State<LoadStats> {
     );
   }
 
-  Widget serviceConditionBlock(int monSug, double monAct) {
+  Widget serviceConditionBlock(int monSug, double monAct,String serviceDate) {
     Color retColor = monSug < monAct ? Colors.red : Colors.green;
     Icon retIcon = monSug < monAct
         ? Icon(
@@ -477,7 +473,7 @@ class _LoadStatsState extends State<LoadStats> {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      calcNextService(serviceDateData),
+                     serviceDate,
                       style: const TextStyle(
                         fontSize: 30,
                         color: Colors.white,
@@ -621,7 +617,8 @@ class _LoadStatsState extends State<LoadStats> {
         const SizedBox(height: 30),
         vehicleCondtionBlock(averageSug, averageAvg),
         const SizedBox(height: 10),
-        serviceConditionBlock(suggestedMonths, actualMonths),
+        serviceConditionBlock(suggestedMonths, actualMonths,formattedNewDate),
+        
       ],
     );
   }

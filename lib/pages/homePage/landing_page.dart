@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gofurthr/components/divide.dart';
-import 'package:gofurthr/components/globals.dart';
+import 'package:gofurthr/pages/homePage/load_insights.dart';
 import 'package:gofurthr/pages/homePage/load_vehicle_data.dart';
 
 class LandingPage extends StatefulWidget {
@@ -13,41 +13,31 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
+    final scrWidth = MediaQuery.of(context).size.width;
+    //final scrHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SafeArea(
-        child: Center(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
           child: Padding(
-            padding:
-                const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 40),
+            padding: const EdgeInsets.all(10),
             child: Column(
               children: [
                 //vehicle list divider
-                FittedBox(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      custDiv(50, 2, primary),
-                      const Text(
-                        " YOUR VEHICLES! ",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: primary,
-                          letterSpacing: 5,
-                        ),
-                      ),
-                      custDiv(250, 2, primary)
-                    ],
-                  ),
-                ),
+                const SizedBox(height: 20),
+                custDiv(scrWidth," YOUR VEHICLES! "),
 
-                const SizedBox(height: 10),
                 //vehicle div
+                const LoadVehicleData(),   
 
-                const SizedBox(
-                  child: Center(
-                    child: LoadVehicleData(),
-                  ),
-                ),
+                const SizedBox(height: 20),
+                custDiv(scrWidth, " INSIGHTS! "),
+
+                const SizedBox(height: 20),
+                const LoadInsights(),
+                
+
               ],
             ),
           ),
