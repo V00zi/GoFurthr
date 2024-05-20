@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gofurthr/components/globals.dart';
 
 class SettingsPage extends StatefulWidget {
