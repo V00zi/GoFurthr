@@ -18,20 +18,39 @@ class _LoadInsightsState extends State<LoadInsights> {
   int totalCars=0;
   int totalBikes=0;
   int totalScooters=0;  
+  double totalFuelConsumed=0.0;  
+  double totalDistanceTraveled=0.0;  
+  double actco2Emission=0.0;  
 
- Future<void> getData() async {
+  
+
+  Future<void> getData() async {
+    void calculateCo2Emissions(double fuelUsed, String fuelType) {
+      double co2PerLiter = 2.0;
+      switch(fuelType){
+        case 'petrol': co2PerLiter = 2.31;
+        break;
+        case 'diesel': co2PerLiter = 2.68;
+        break;
+        case 'LPG': co2PerLiter = 1.51;
+        break;
+      }
+      actco2Emission+=(fuelUsed*co2PerLiter)/1000;
+    }
+    
     final collectionRef = FirebaseFirestore.instance
-        .collection('userData')
-        .doc(user.email)
-        .collection('Vehicles');
+    .collection('userData')
+    .doc(user.email)
+    .collection('Vehicles');
     final querySnapshot = await collectionRef.get();
     final List<DocumentSnapshot> documents = querySnapshot.docs;
+
     
     if(documents.isNotEmpty){
       totalVehicleCount=documents.length;
       for (final doc in documents) {
         final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        
+                
         switch(data["Type"]){
           case "Car":
             totalCars++;
@@ -43,10 +62,35 @@ class _LoadInsightsState extends State<LoadInsights> {
             totalScooters++;
             break;
         }
-      }
 
+      }
     }
 
+    //logic for nested collection here
+    for (var doc in documents) {
+      double fuelCon=0;
+      String fuelType="";
+
+      final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      fuelType=data["FuelType"];
+      print(fuelType);
+
+      var subcollectionRef = doc.reference.collection('fuelData');
+      final querySnapshot = await subcollectionRef.get();
+      final List<DocumentSnapshot> documents = querySnapshot.docs;
+
+      if(documents.isNotEmpty){
+        for (var subdoc in documents) {
+          final Map<String, dynamic> data = subdoc.data() as Map<String, dynamic>;
+          
+          fuelCon+=data["fuel"];          
+  
+          totalFuelConsumed+=data["fuel"];
+          totalDistanceTraveled+=data["distance"];
+        }
+        calculateCo2Emissions(fuelCon, "petrol");
+      }
+    }
     setState(() {});
   }
 
@@ -71,7 +115,7 @@ class _LoadInsightsState extends State<LoadInsights> {
           children: [
             SizedBox(
               width: 134,
-              height: 94,
+              height: 60,
               child: FittedBox(
                 fit: BoxFit.contain,
                 child: Row(
@@ -96,13 +140,16 @@ class _LoadInsightsState extends State<LoadInsights> {
                 ),
               ),
             ),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.white,
+            FittedBox(
+              fit: BoxFit.contain,
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -156,10 +203,9 @@ class _LoadInsightsState extends State<LoadInsights> {
   Widget build(BuildContext context) {
     final scrWidth=MediaQuery.of(context).size.width;
 
-    return Container(
+    return SizedBox(
       height: 400,
       width: double.infinity,
-      color: Color.fromARGB(45, 238, 114, 114),
       child: FittedBox(
         fit: BoxFit.contain,
         alignment: Alignment.topCenter,
@@ -167,21 +213,56 @@ class _LoadInsightsState extends State<LoadInsights> {
           children: [
             vehicleCounter(totalCars, totalBikes, totalScooters),
             const SizedBox(height: 20),
-            Container(
-              height: 250,
-              width: scrWidth-70,
-              color: Colors.blue,
-              child: GridView.count(
+            SizedBox(
+              height: 215,
+              width: scrWidth-70,            
+              child: GridView.count(                
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
                 crossAxisCount: 3,
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10,
-                children: List.generate(6, (index) {
-                  return Container(
-                    height: 50,
-                    width: 50,
-                    color: Colors.white,
-                  );
-                }),
+                children: [
+                  addCard(
+                    Colors.blue,
+                    "Total Vehicles",
+                    totalVehicleCount,
+                    "No.",
+                  ),
+
+                  addCard(
+                    Colors.green,
+                    "Total Fuel Consumed",
+                    totalFuelConsumed.toInt(),
+                    "L",
+                  ),
+                  addCard(
+                    Colors.orange,
+                    "Total Distance Covered",
+                    totalDistanceTraveled.toInt(),
+                    "Km",
+                  ),
+                  addCard(
+                    primary,
+                    "Total CO2 Emission",
+                    actco2Emission.toStringAsFixed(3),
+                    "Tons",
+                  ),
+                  
+                  addCard(
+                    primary,
+                    "WIP",
+                    "COMING SOON",
+                    "",
+                  ),
+                  
+                  addCard(
+                    primary,
+                    "WIP",
+                    "COMING SOON",
+                    "",
+                  ),
+                ]
               ),
             ),
           ],

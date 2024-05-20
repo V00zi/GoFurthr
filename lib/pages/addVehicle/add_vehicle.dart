@@ -11,6 +11,7 @@ class AddVehBT extends StatefulWidget {
   String type;
   String brand;
   String model;
+  String fuel;
 
   AddVehBT({
     super.key,
@@ -18,6 +19,7 @@ class AddVehBT extends StatefulWidget {
     required this.type,
     required this.brand,
     required this.model,
+    required this.fuel,
   });
 
   @override
@@ -43,6 +45,7 @@ class _AddVehBTState extends State<AddVehBT> {
       'Type': widget.type,
       'Brand': widget.brand,
       'Model': widget.model,
+      'FuelType': widget.fuel,
     });
     //code to go back to homepage
     if (mounted) {

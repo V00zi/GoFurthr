@@ -3,9 +3,13 @@ import 'package:gofurthr/components/globals.dart';
 import 'package:gofurthr/pages/auth/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:timezone/data/latest.dart' as tz;
+
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

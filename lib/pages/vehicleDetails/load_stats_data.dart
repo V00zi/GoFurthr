@@ -111,6 +111,7 @@ class _LoadStatsState extends State<LoadStats> {
       }
     }
 
+
     lowestAvg = avgData.reduce(math.min);
     highestAvg = avgData.reduce(math.max);
 
@@ -132,6 +133,7 @@ class _LoadStatsState extends State<LoadStats> {
     totalFuel = double.parse(totalFuel.toStringAsFixed(2));
 
     calcAvgDays(fuelDateData, false);
+    calcNextFuel(fuelDateData, avgDays);
 
     //
     //
@@ -210,6 +212,20 @@ class _LoadStatsState extends State<LoadStats> {
     }
   }
 
+  void calcNextFuel(List<String> inp,int daysToAdd) {
+    int len = inp.length;
+    DateTime recentDate, newDate;
+    
+    final formatter = DateFormat("dd/MM/yy");
+    recentDate = formatter.parse(inp[len - 1]);
+    newDate = recentDate.add(Duration(days: daysToAdd));
+    formattedNewDate =  formatter.format(newDate);
+    
+    if(daysToAdd!=0){
+      
+    }
+  }
+
   void calcNextService(List<String> inp) {
     int len = inp.length;
     DateTime recentDate, newDate;
@@ -219,6 +235,10 @@ class _LoadStatsState extends State<LoadStats> {
     recentDate = formatter.parse(inp[len - 1]);
     newDate = recentDate.add(Duration(days: daysToAdd.toInt()));
     formattedNewDate =  formatter.format(newDate);
+
+    if(len>0){
+      
+    }
   }
 
   //builder
@@ -397,18 +417,26 @@ class _LoadStatsState extends State<LoadStats> {
   }
 
   Widget serviceConditionBlock(int monSug, double monAct,String serviceDate) {
-    Color retColor = monSug < monAct ? Colors.red : Colors.green;
-    Icon retIcon = monSug < monAct
-        ? Icon(
-            Icons.arrow_downward,
-            color: retColor.withOpacity(0.3),
-            size: 30,
-          )
-        : Icon(
-            Icons.arrow_upward,
-            color: retColor.withOpacity(0.3),
-            size: 30,
-          );
+    Color retColor = Colors.white;
+    Icon retIcon= Icon(Icons.error_outline,color: retColor.withOpacity(0.3),size: 30);
+    if(monAct>0) {
+      retColor = monSug < monAct ? Colors.red : Colors.green;
+      retIcon = monSug < monAct ?
+        Icon(
+          Icons.arrow_downward,
+          color: retColor.withOpacity(0.3),
+          size: 30,
+        ) :
+        Icon(
+          Icons.arrow_upward,
+          color: retColor.withOpacity(0.3),
+          size: 30,
+        )
+      ;
+    }
+      
+
+     
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
