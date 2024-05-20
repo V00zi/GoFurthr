@@ -73,7 +73,6 @@ class _LoadInsightsState extends State<LoadInsights> {
 
       final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
       fuelType=data["FuelType"];
-      print(fuelType);
 
       var subcollectionRef = doc.reference.collection('fuelData');
       final querySnapshot = await subcollectionRef.get();
@@ -88,7 +87,7 @@ class _LoadInsightsState extends State<LoadInsights> {
           totalFuelConsumed+=data["fuel"];
           totalDistanceTraveled+=data["distance"];
         }
-        calculateCo2Emissions(fuelCon, "petrol");
+        calculateCo2Emissions(fuelCon, fuelType);
       }
     }
     setState(() {});
@@ -102,8 +101,8 @@ class _LoadInsightsState extends State<LoadInsights> {
 
   Widget addCard(Color color, String label, dynamic value, String unit) {
     return Container(
-      width: 150,
-      height: 150,
+      width: 100,
+      height: 100,
       decoration: BoxDecoration(
         color: color.withOpacity(0.4),
         borderRadius: BorderRadius.circular(18),
@@ -114,8 +113,7 @@ class _LoadInsightsState extends State<LoadInsights> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             SizedBox(
-              width: 134,
-              height: 60,
+              height: 55,
               child: FittedBox(
                 fit: BoxFit.contain,
                 child: Row(
@@ -201,7 +199,7 @@ class _LoadInsightsState extends State<LoadInsights> {
 
   @override
   Widget build(BuildContext context) {
-    final scrWidth=MediaQuery.of(context).size.width;
+    //final scrWidth=MediaQuery.of(context).size.width;
 
     return SizedBox(
       height: 400,
@@ -213,15 +211,11 @@ class _LoadInsightsState extends State<LoadInsights> {
           children: [
             vehicleCounter(totalCars, totalBikes, totalScooters),
             const SizedBox(height: 20),
-            SizedBox(
-              height: 215,
-              width: scrWidth-70,            
-              child: GridView.count(                
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                crossAxisCount: 3,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
+            
+            FittedBox(
+              fit: BoxFit.contain,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   addCard(
                     Colors.blue,
@@ -229,42 +223,54 @@ class _LoadInsightsState extends State<LoadInsights> {
                     totalVehicleCount,
                     "No.",
                   ),
-
+                  const SizedBox(width: 10),
+              
                   addCard(
                     Colors.green,
                     "Total Fuel Consumed",
                     totalFuelConsumed.toInt(),
                     "L",
                   ),
+                  const SizedBox(width: 10),
+
                   addCard(
                     Colors.orange,
                     "Total Distance Covered",
                     totalDistanceTraveled.toInt(),
                     "Km",
                   ),
-                  addCard(
-                    primary,
-                    "Total CO2 Emission",
-                    actco2Emission.toStringAsFixed(3),
-                    "Tons",
-                  ),
-                  
-                  addCard(
-                    primary,
-                    "WIP",
-                    "COMING SOON",
-                    "",
-                  ),
-                  
-                  addCard(
-                    primary,
-                    "WIP",
-                    "COMING SOON",
-                    "",
-                  ),
-                ]
+                ],
               ),
             ),
+            const SizedBox(height: 20),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                addCard(
+                  primary,
+                  "Total CO2 Emission",
+                  actco2Emission.toStringAsFixed(3),
+                  "Tons",
+                ),
+                const SizedBox(width: 10),
+
+                addCard(
+                  primary,
+                  "WIP",
+                  "COMING SOON",
+                  "",
+                ),
+                const SizedBox(width: 10),
+
+                addCard(
+                  primary,
+                  "WIP",
+                  "COMING SOON",
+                  "",
+                ),
+              ],
+            ),                             
           ],
         ),
       ),

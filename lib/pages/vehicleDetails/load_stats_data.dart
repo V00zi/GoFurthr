@@ -599,7 +599,7 @@ class _LoadStatsState extends State<LoadStats> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            addCard(Colors.red, "Lowest Fuel\nEfficiency", lowestAvg, "KM/L"),
+            addCard(Colors.red, "Lowest Fuel\nEfficiency", lowestAvg == double.infinity ? 0 : lowestAvg, "KM/L"),
             const SizedBox(width: 20),
             addCard(
                 Colors.white, "Avgrage Fuel\nEfficiency", averageAvg, "KM/L"),

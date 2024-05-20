@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:gofurthr/components/globals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gofurthr/pages/auth/auth_page.dart';
+import 'package:gofurthr/pages/settings.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const LandingPage(),
     const AddVeh(),
+    const SettingsPage(),
   ];
 
   final user = FirebaseAuth.instance.currentUser!;
